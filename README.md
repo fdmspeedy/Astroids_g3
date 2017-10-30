@@ -1,3 +1,3 @@
 # Astroids_g3
-CSCI 41 Group 3 project
+CSCI 41 Group 3 project\n
 TESTESTSETESTETSETSETSETSET
