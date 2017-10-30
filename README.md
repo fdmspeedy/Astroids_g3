@@ -10,9 +10,9 @@ How everything works will be pretty much typed in here.
 Make sure to print this thingy before the one on one questions with Jamison.
 Let me know if there are misconceptions and / or better explanations of how it works.
 
-==========
-|SOURCES:|
-==========
+=========
+|SOURCES|
+=========
 
    - = main.cpp = -
    - = mainwindow.cpp = -
@@ -21,9 +21,9 @@ Let me know if there are misconceptions and / or better explanations of how it w
    - = station.cpp = -
    - = playership.cpp = -
 
-==========
-|HEADERS:|
-==========
+=========
+|HEADERS|
+=========
 
    - = mainwindow.h = -
     
@@ -34,9 +34,9 @@ Let me know if there are misconceptions and / or better explanations of how it w
    - = commandstationdelete.h = -
    - = playership.h = -
 
-============
-|DISTFILES:|
-============
+===========
+|DISTFILES|
+===========
 
    - = pixmap_station = -
 
