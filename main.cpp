@@ -17,7 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+//Freddie Martinez
+//Aaron Gomez
+//Eric Smrkovsky
+//Hector Rios
+//Joshua Douglas
+//Scott Farrow
 #include "mainwindow.h"
 
 #include <QApplication>
