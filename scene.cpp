@@ -54,20 +54,21 @@ Scene::Scene( QUndoStack* undoStack ) : QGraphicsScene()
 
 void  Scene::mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
-  // set local variables and check if existing station clicked
+ /* 
+ // set local variables and check if existing station clicked
   qreal           x = event->scenePos().x();
   qreal           y = event->scenePos().y();
   //Station* station = dynamic_cast<Station*>( itemAt(x, y) );
 
   // if station not clicked and right mouse button pressed, create new Station
-  if ( /*station == 0 && */event->button() == Qt::LeftButton )
+  if ( /*station == 0 && *//*event->button() == Qt::LeftButton )
   {
     m_undoStack->push( new CommandStationAdd( this, x, y ) );
     emit message( QString("Station add at %1,%2").arg(x).arg(y) );
   }
 
   // call base mousePressEvent to handle other mouse press events such as selecting
-  QGraphicsScene::mousePressEvent( event );
+  QGraphicsScene::mousePressEvent( event );*/
 }
 
 /********************************* contextMenuEvent **********************************/
