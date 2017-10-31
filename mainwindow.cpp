@@ -49,27 +49,27 @@ MainWindow::MainWindow() : QMainWindow()
     setFixedSize(1200, 700);
   // add drop down menus
   QMenu*  fileMenu = menuBar()->addMenu( "&File" );
-  QMenu*  editMenu = menuBar()->addMenu( "&Edit" );
-  QMenu*  viewMenu = menuBar()->addMenu( "&View" );
+  //QMenu*  editMenu = menuBar()->addMenu( "&Edit" );
+ // QMenu*  viewMenu = menuBar()->addMenu( "&View" );
   menuBar()->addMenu( "&Simulate" );
   menuBar()->addMenu( "&Help" );
 
   // create file menu options
   QAction* newAction     = fileMenu->addAction( "&New",              this, SLOT(fileNew()) );
-  QAction* saveAction    = fileMenu->addAction( "&Save As...",       this, SLOT(fileSaveAs()) );
-  QAction* openAction    = fileMenu->addAction( "&Open ...",         this, SLOT(fileOpen()) );
+//  QAction* saveAction    = fileMenu->addAction( "&Save As...",       this, SLOT(fileSaveAs()) );
+ // QAction* openAction    = fileMenu->addAction( "&Open ...",         this, SLOT(fileOpen()) );
   fileMenu->addSeparator();
-  QAction* previewAction = fileMenu->addAction( "Print pre&view...", this, SLOT(filePrintPreview()) );
-  QAction* printAction   = fileMenu->addAction( "&Print...",         this, SLOT(filePrint()) );
+//  QAction* previewAction = fileMenu->addAction( "Print pre&view...", this, SLOT(filePrintPreview()) );
+//  QAction* printAction   = fileMenu->addAction( "&Print...",         this, SLOT(filePrint()) );
   fileMenu->addSeparator();
                            fileMenu->addAction( "&Quit",             this, SLOT(close()) );
   newAction->setShortcut( QKeySequence::New );
-  saveAction->setShortcut( QKeySequence::Save );
-  openAction->setShortcut( QKeySequence::Open );
-  printAction->setShortcut( QKeySequence::Print );
+ // saveAction->setShortcut( QKeySequence::Save );
+ // openAction->setShortcut( QKeySequence::Open );
+ // printAction->setShortcut( QKeySequence::Print );
 
   // create undo stack and associated menu actions
-  m_undoStack = new QUndoStack( this );
+/*  m_undoStack = new QUndoStack( this );
   m_undoView  = 0;
   viewMenu->addAction( "Undo stack", this, SLOT(showUndoStack()) );
   QAction* undoAction = m_undoStack->createUndoAction( this );
@@ -78,14 +78,14 @@ MainWindow::MainWindow() : QMainWindow()
   redoAction->setShortcut( QKeySequence::Redo );
   editMenu->addAction( undoAction );
   editMenu->addAction( redoAction );
-
+*/
   // create toolbar, set icon size, and add actions
   QToolBar*   toolBar = addToolBar( "Standard" );
   QStyle*     style   = this->style();
   QSize       size    = style->standardIcon(QStyle::SP_DesktopIcon).actualSize( QSize(99,99) );
   toolBar->setIconSize( size );
   newAction->setIcon( style->standardIcon(QStyle::SP_DesktopIcon) );
-  openAction->setIcon( style->standardIcon(QStyle::SP_DialogOpenButton) );
+ /* openAction->setIcon( style->standardIcon(QStyle::SP_DialogOpenButton) );
   saveAction->setIcon( style->standardIcon(QStyle::SP_DialogSaveButton) );
   previewAction->setIcon( style->standardIcon(QStyle::SP_FileDialogContentsView) );
   printAction->setIcon( style->standardIcon(QStyle::SP_ComputerIcon) );
@@ -100,7 +100,7 @@ MainWindow::MainWindow() : QMainWindow()
   toolBar->addSeparator();
   toolBar->addAction( undoAction );
   toolBar->addAction( redoAction );
-
+*/
   //Make Player
   playerShip *player = new playerShip(); //Creating player
 
@@ -129,7 +129,7 @@ void  MainWindow::showMessage( QString msg )
 }
 
 /*********************************** showUndoStack ***********************************/
-
+/*
 void  MainWindow::showUndoStack()
 {
   // open up undo stack window
@@ -141,7 +141,7 @@ void  MainWindow::showUndoStack()
   }
   m_undoView->show();
 }
-
+*/
 /************************************ fileSaveAs *************************************/
 
 bool  MainWindow::fileSaveAs()
