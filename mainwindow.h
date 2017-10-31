@@ -42,11 +42,11 @@ public slots:
   void showMessage( QString );        // show message on status bar
   void showUndoStack();               // open up undo stack window
   void fileNew();                     // start new simulation
-  bool fileSaveAs();                  // save simulation to file returning true if successful
-  bool fileOpen();                    // load simulation file returning true if successful
-  void filePrintPreview();            // display print preview dialog
-  void filePrint();                   // display print dialog
-  void print( QPrinter* );            // draw print page
+ // bool fileSaveAs();                  // save simulation to file returning true if successful
+ // bool fileOpen();                    // load simulation file returning true if successful
+ // void filePrintPreview();            // display print preview dialog
+ // void filePrint();                   // display print dialog
+ // void print( QPrinter* );            // draw print page
 
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
