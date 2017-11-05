@@ -49,10 +49,11 @@ MainWindow::MainWindow() : QMainWindow()
     setFixedSize(1200, 700);
   // add drop down menus
   QMenu*  fileMenu = menuBar()->addMenu( "&File" );
+  fileMenu->addAction("&New",this,SLOT(void));
   //QMenu*  editMenu = menuBar()->addMenu( "&Edit" );
  // QMenu*  viewMenu = menuBar()->addMenu( "&View" );
-  menuBar()->addMenu( "&Simulate" );
-  menuBar()->addMenu( "&Help" );
+ // menuBar()->addMenu( "&Simulate" );
+  //menuBar()->addMenu( "&Help" );
 
   // create file menu options
   QAction* newAction     = fileMenu->addAction( "&New",              this, SLOT(fileNew()) );
@@ -90,9 +91,9 @@ MainWindow::MainWindow() : QMainWindow()
   previewAction->setIcon( style->standardIcon(QStyle::SP_FileDialogContentsView) );
   printAction->setIcon( style->standardIcon(QStyle::SP_ComputerIcon) );
   undoAction->setIcon( style->standardIcon(QStyle::SP_ArrowBack) );
-  redoAction->setIcon( style->standardIcon(QStyle::SP_ArrowForward) );
+  redoAction->setIcon( style->standardIcon(QStyle::SP_ArrowForward) );*/
   toolBar->addAction( newAction );
-  toolBar->addAction( openAction );
+ /* toolBar->addAction( openAction );
   toolBar->addAction( saveAction );
   toolBar->addSeparator();
   toolBar->addAction( previewAction );
@@ -144,7 +145,7 @@ void  MainWindow::showUndoStack()
 */
 /************************************ fileSaveAs *************************************/
 
-bool  MainWindow::fileSaveAs()
+/*bool  MainWindow::fileSaveAs()
 {
   // get user to select filename and location
   QString filename = QFileDialog::getSaveFileName();
@@ -177,7 +178,7 @@ bool  MainWindow::fileSaveAs()
 
 /************************************* fileOpen **************************************/
 
-bool  MainWindow::fileOpen()
+/*bool  MainWindow::fileOpen()
 {
   // get user to select filename and location
   QString filename = QFileDialog::getOpenFileName();
@@ -227,7 +228,7 @@ bool  MainWindow::fileOpen()
 }
 
 /********************************* filePrintPreview **********************************/
-
+/*
 void  MainWindow::filePrintPreview()
 {
   // display print preview dialog
@@ -238,7 +239,7 @@ void  MainWindow::filePrintPreview()
 }
 
 /************************************ filePrint **************************************/
-
+/*
 void  MainWindow::filePrint()
 {
   // display print dialog and if accepted print
@@ -248,7 +249,7 @@ void  MainWindow::filePrint()
 }
 
 /*************************************** print ***************************************/
-
+/*
 void  MainWindow::print( QPrinter* printer )
 {
   // create painter for drawing print page
@@ -281,12 +282,12 @@ void  MainWindow::fileNew()
   if ( m_scene->items().count() <= 1 ) return;
 
   // check if user wants to save before starting new simulation
-  while (true)
+/*  while (true)
     switch ( QMessageBox::warning( this, "QSimulate",
         "Do you want to save before starting new?",
         QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel ) )
     {
-      case QMessageBox::Save:
+    /*  case QMessageBox::Save:
         // if save not successful ask again
         if ( !fileSaveAs() ) break;
 
@@ -304,14 +305,14 @@ void  MainWindow::fileNew()
 
       default:    // "Cancel"
         return;
-    }
+    }*/
 }
 
 /************************************ closeEvent *************************************/
 
 void  MainWindow::closeEvent( QCloseEvent* event )
 {
-  // if no stations (only default top-left scene anchor) exists then accept close event
+ /* // if no stations (only default top-left scene anchor) exists then accept close event
   if ( m_scene->items().count() <= 1 )
   {
     event->accept();
@@ -319,12 +320,12 @@ void  MainWindow::closeEvent( QCloseEvent* event )
   }
 
   // check if user wants to save before quitting
-  while (true)
+ /* while (true)
     switch ( QMessageBox::warning( this, "QSimulate",
         "Do you want to save before you quit?",
         QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel ) )
     {
-      case QMessageBox::Save:
+    /*  case QMessageBox::Save:
         // if save not successful ask again
         if ( !fileSaveAs() ) break;
 
@@ -334,6 +335,6 @@ void  MainWindow::closeEvent( QCloseEvent* event )
 
       default:    // "Cancel"
         event->ignore();
-        return;
-    }
+        return;*/
+   // }
 }
