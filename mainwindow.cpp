@@ -316,13 +316,17 @@ void  MainWindow::fileNew()
           delete m_scene;
           m_scene = newScene;
 
-          myRect *player = new myRect(); //Creating player
+          QTimer * timer = new QTimer();
+          myRect *player = new myRect(timer); //Creating player, and passing a Timer.
+
           m_scene->addItem(player);
           //Set player in the middle.
           player->setPos(800 / 2, 600/ 2); //Set player in the middle.
           //Spawn Enemies
-          QTimer * timer = new QTimer();
+          //QTimer * timer = new QTimer();
+
           QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
+
           timer->start(1000/33); //Make an enemy every 2000 milli-seconds
 
           return;

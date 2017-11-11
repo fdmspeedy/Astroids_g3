@@ -10,7 +10,6 @@ class Animation_Control : public QGraphicsRectItem
 {
 public:
     Animation_Control();
-    int hi = 1;
 };
 
 #endif // ANIMATION_CONTROL_H

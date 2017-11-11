@@ -6,31 +6,29 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
 #include <QObject>
+#include <QTimer>
 
 class myRect : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    myRect();
+    myRect(QTimer *);
     void keyPressEvent(QKeyEvent * event);
-    void find_pos(float &, float&);
-
-    QRectF boundingRect() const;
-
-protected:
-    void advance(int phase);
 
 public slots:
     void spawn();
+    void respond();
 
 private:
+    QTimer * player_timer;
+
     int enemy_amount = 1;
-    float angle =0;
+    float angle;
 
-    int width = 79/2;
-    int height = 111/2;
+    int width;
+    int height;
 
-    float speed = 0;
+    float speed;
     float speed_x;
     float speed_y;
     //void DoCollision();

@@ -13,13 +13,6 @@ Enemy::Enemy()
 
     //Drew the Rect
     setRect(0,0, 100, 100);
-
-    //Qtimer for now. Will remove later.
-    QTimer * timer = new QTimer();
-    //Connects the timeout signal to the move slot
-    connect(timer, SIGNAL(timeout()), this, SLOT(move()));
-
-    timer->start(50); //50 milli-seconds
 }
 
 //width: 800, height: 600.
