@@ -19,9 +19,6 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QDateTime>
-//#include <QPrinter>
-//#include <QPrintPreviewDialog>
-//#include <QPrintDialog>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QToolBar>
@@ -35,78 +32,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
-    // add drop down menus (currently empty)
-    //QMenu*  fileMenu = menuBar()->addMenu("&File");
-
-    //QAction* openAction = fileMenu->addAction("&Open", this, SLOT(fileOpen()));
-    //openAction->setShortcut(QKeySequence::Open);
-
-    //**************
-    //setFixedSize(1200, 700);
-    // add drop down menus
+    // create file menu
     QMenu*  fileMenu = menuBar()->addMenu( "&File" );
-    //QMenu*  editMenu = menuBar()->addMenu( "&Game Mode Edit" );
-    //QMenu*  viewMenu = menuBar()->addMenu( "&Game View" );
-    //menuBar()->addMenu( "&Peferences" );
-    //menuBar()->addMenu( "&Help" );
 
     // create file menu options
     QAction* newAction     = fileMenu->addAction( "&New", this, SLOT(fileNew()) );
-    //QAction* saveAction    = fileMenu->addAction( "&Save As...",       this, SLOT(fileSaveAs()) );
-    //QAction* openAction    = fileMenu->addAction( "&Open ...",         this, SLOT(fileOpen()) );
     fileMenu->addSeparator();
-    //QAction* previewAction = fileMenu->addAction( "Print pre&view...", this, SLOT(filePrintPreview()) );
-    //QAction* printAction   = fileMenu->addAction( "&Print...",         this, SLOT(filePrint()) );
-    //fileMenu->addSeparator();
     fileMenu->addAction( "&Quit", this, SLOT(close()) );
     newAction->setShortcut( QKeySequence::New );
-    //saveAction->setShortcut( QKeySequence::Save );
-    //openAction->setShortcut( QKeySequence::Open );
-    //printAction->setShortcut( QKeySequence::Print );
 
     // create undo stack and associated menu actions
     m_undoStack = new QUndoStack( this );
     m_undoView  = 0;
-    //viewMenu->addAction( "Undo stack", this, SLOT(showUndoStack()) );
-    //QAction* undoAction = m_undoStack->createUndoAction( this );
-    //QAction* redoAction = m_undoStack->createRedoAction( this );
-    //undoAction->setShortcut( QKeySequence::Undo );
-    //redoAction->setShortcut( QKeySequence::Redo );
-    //editMenu->addAction( undoAction );
-    //editMenu->addAction( redoAction );
-
-    /* create toolbar, set icon size, and add actions
-    QToolBar*   toolBar = addToolBar( "Standard" );
-    QStyle*     style   = this->style();
-    QSize       size    = style->standardIcon(QStyle::SP_DesktopIcon).actualSize( QSize(99,99) );
-    toolBar->setIconSize( size );
-    newAction->setIcon( style->standardIcon(QStyle::SP_DesktopIcon) );
-    openAction->setIcon( style->standardIcon(QStyle::SP_DialogOpenButton) );
-    saveAction->setIcon( style->standardIcon(QStyle::SP_DialogSaveButton) );
-    //previewAction->setIcon( style->standardIcon(QStyle::SP_FileDialogContentsView) );
-    //printAction->setIcon( style->standardIcon(QStyle::SP_ComputerIcon) );
-    undoAction->setIcon( style->standardIcon(QStyle::SP_ArrowBack) );
-    redoAction->setIcon( style->standardIcon(QStyle::SP_ArrowForward) );
-    toolBar->addAction( newAction );
-    toolBar->addAction( openAction );
-    toolBar->addAction( saveAction );
-    toolBar->addSeparator();
-    //toolBar->addAction( previewAction );
-    //toolBar->addAction( printAction );
-    toolBar->addSeparator();
-    toolBar->addAction( undoAction );
-    toolBar->addAction( redoAction );
-    //**************/
-
-    //QAction* exitAction = fileMenu->addAction("&Close", this, SLOT(closeEvent(QCloseEvent*)));
-    //exitAction->setShortcut(QKeySequence::Close);
-
-    //menuBar()->addMenu("&Edit");
-    //menuBar()->addMenu("&View");
-    //menuBar()->addMenu("&Simulate");
-    //menuBar()->addMenu("&Help");
-
-    //myRect *player = new myRect(); //Creating player
 
     // create scene and central widget view of scene
     m_scene               = new Scene(m_undoStack);
@@ -115,22 +52,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     view->setFrameStyle( 0 );
     setCentralWidget( view );
 
-    //Add player to scene
-    //m_scene->addItem(player);
-
     //Regulate view-ing of the scene.
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->show();
-    view->setFixedSize(800, 600);//Set the view to a fixed size.
-    m_scene->setSceneRect(0, 0, 800, 600);
-
-    //Player added when file NEW command is called.
-    //player->setPos(view->width() / 2, view->height()/ 2); //Set player in the middle.
-    //Spawn Enemies
-    //QTimer * timer = new QTimer();
-    //QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
-    //timer->start(1000/33); //Make an enemy every 2000 milli-seconds
+    //view->setFixedSize(800, 600);//Set the view to a fixed size.
+    //m_scene->setSceneRect(0, 0, 800, 600);
 
     // connect message signal from scene to showMessage slot
     connect( m_scene, SIGNAL(message(QString)), this, SLOT(showMessage(QString)) );
@@ -244,53 +171,6 @@ bool  MainWindow::fileOpen()
   return true;
 }
 
-/********************************* filePrintPreview **********************************/
-
-/*void  MainWindow::filePrintPreview()
-{
-  // display print preview dialog
-  QPrinter             printer( QPrinter::ScreenResolution ); // QPrinter::HighResolution );
-  QPrintPreviewDialog  preview( &printer, this );
-  connect( &preview, SIGNAL(paintRequested(QPrinter*)), SLOT(print(QPrinter*)) );
-  preview.exec();
-}
-
-/************************************ filePrint **************************************/
-
-/*void  MainWindow::filePrint()
-{
-  // display print dialog and if accepted print
-  QPrinter       printer( QPrinter::ScreenResolution );
-  QPrintDialog   dialog( &printer, this );
-  if ( dialog.exec() == QDialog::Accepted ) print( &printer );
-}
-
-/*************************************** print ***************************************/
-
-/*void  MainWindow::print( QPrinter* printer )
-{
-  // create painter for drawing print page
-  QPainter painter( printer );
-  int      w = printer->pageRect().width();
-  int      h = printer->pageRect().height();
-  QRect    page( 0, 0, w, h );
-
-  // create a font appropriate to page size
-  QFont    font = painter.font();
-  font.setPixelSize( (w+h) / 100 );
-  painter.setFont( font );
-
-  // draw labels in corners of page
-  painter.drawText( page, Qt::AlignTop    | Qt::AlignLeft, "QSimulate" );
-  painter.drawText( page, Qt::AlignBottom | Qt::AlignLeft, QString(getenv("USERNAME")) );
-  painter.drawText( page, Qt::AlignBottom | Qt::AlignRight,
-                    QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
-
-  // draw simulated landscape
-  page.adjust( w/20, h/20, -w/20, -h/20 );
-  m_scene->render( &painter, page );
-}
-
 /************************************** fileNew **************************************/
 
 void  MainWindow::fileNew()
@@ -312,6 +192,7 @@ void  MainWindow::fileNew()
           m_undoStack->clear();
           Scene*          newScene = new Scene( m_undoStack );
           QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
+          centralWidget()->setStyleSheet(QStringLiteral("background-image: url(:/new/files/Galaxy-illustration.jpg);"));
           view->setScene( newScene );
           delete m_scene;
           m_scene = newScene;

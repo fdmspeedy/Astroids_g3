@@ -1,7 +1,14 @@
 <RCC>
-    <qresource prefix="/new/files">
-        <file>ship_01.png</file>
-        <file>bullet_Purple.png</file>
-        <file>Standard_Ship_01.png</file>
-    </qresource>
+  <qresource prefix="/new/files">
+    <file>Galaxy-illustration.jpg</file>
+    <file>ship_01.png</file>
+    <file>bullet_Purple.png</file>
+    <file>Standard_Ship_01.png</file>
+    <file>Highscore.png</file>
+    <file>New.png</file>
+    <file>Quit.png</file>
+    <file>Resume.png</file>
+    <file>Resume (2).png</file>
+    <file>Save.png</file>
+  </qresource>
 </RCC>
