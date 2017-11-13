@@ -14,6 +14,7 @@ class myRect : public QObject, public QGraphicsPixmapItem
 public:
     myRect(QTimer *);
     void keyPressEvent(QKeyEvent * event);
+    void updateLevel(int);
 
 public slots:
     void spawn();
@@ -22,7 +23,10 @@ public slots:
 private:
     QTimer * player_timer;
 
-    int enemy_amount = 1;
+    int level = 1;
+    int enemy_amount = 2;
+    int limit;
+
     float angle;
 
     int width;

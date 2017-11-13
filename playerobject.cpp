@@ -16,6 +16,9 @@ using namespace std;
 //The Timer is passed in order to create bullet and astroid movement.
 myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
 {
+    int count;
+    limit = 0;
+
     player_timer = timer;
 
     //Ship Width and Height.
@@ -111,18 +114,16 @@ void myRect::keyPressEvent(QKeyEvent *event)
     //Possible brake button.
     else if (event->key() == Qt::Key_Down)
     {
+
     }
     else if (event->key() == Qt::Key_Space)
     {
         //Create Bullet.
         Bullet * bullet = new Bullet();
 
-        //qDebug() << "x(): " << x() << " y(); " << y();
-
         //Set position of the bullet.
-        bullet->setPos(x() + (10/2), y() - (54/2));
+        bullet->setPos(x() + (width-5), y()-(height+10));
         bullet->updateBullet(angle, speed_x, speed_y);
-
 
         //qDebug() << "Bullet created";
         scene()->addItem(bullet);
@@ -131,18 +132,31 @@ void myRect::keyPressEvent(QKeyEvent *event)
     }
 }
 
-
+void myRect::updateLevel(int given_level)
+{
+    level = given_level;
+}
 
 void myRect::spawn()
 {
-    //Add only one enemy
-    if (enemy_amount == 1)
+    int count;
+
+    //This is just bad, imma fix it later.
+    if (enemy_amount > limit)
     {
-        Enemy * enemy = new Enemy();
-        scene()->addItem(enemy);
-        QObject::connect(player_timer, SIGNAL(timeout()), enemy, SLOT(move()));
-        enemy_amount++;
+        for (count = 0; count < enemy_amount; count++)
+        {
+            qDebug() << "Enemy being made...";
+            qDebug() << "Count: " << count;
+            Enemy * enemy = new Enemy();
+            scene()->addItem(enemy);
+            QObject::connect(player_timer, SIGNAL(timeout()), enemy, SLOT(move()));
+            if (count == enemy_amount)
+                break;
+        }
+        limit = enemy_amount;
     }
+
     //Player velocity is being moved.setPos()
     setPos(x()+ speed_x, y()-speed_y);//speed_y
 

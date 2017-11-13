@@ -19,6 +19,9 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QDateTime>
+//#include <QPrinter>
+//#include <QPrintPreviewDialog>
+//#include <QPrintDialog>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QToolBar>
@@ -31,12 +34,11 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    // create file menu
     QMenu*  fileMenu = menuBar()->addMenu( "&File" );
 
     // create file menu options
     QAction* newAction     = fileMenu->addAction( "&New", this, SLOT(fileNew()) );
+
     fileMenu->addSeparator();
     fileMenu->addAction( "&Quit", this, SLOT(close()) );
     newAction->setShortcut( QKeySequence::New );
@@ -52,12 +54,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     view->setFrameStyle( 0 );
     setCentralWidget( view );
 
+    //Add player to scene
+    //m_scene->addItem(player);
+
     //Regulate view-ing of the scene.
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->show();
-    //view->setFixedSize(800, 600);//Set the view to a fixed size.
-    //m_scene->setSceneRect(0, 0, 800, 600);
+    view->setFixedSize(800, 600);//Set the view to a fixed size.
+    m_scene->setSceneRect(0, 0, 800, 600);
 
     // connect message signal from scene to showMessage slot
     connect( m_scene, SIGNAL(message(QString)), this, SLOT(showMessage(QString)) );
@@ -171,48 +176,78 @@ bool  MainWindow::fileOpen()
   return true;
 }
 
+/********************************* filePrintPreview **********************************/
+
+/*void  MainWindow::filePrintPreview()
+{
+  // display print preview dialog
+  QPrinter             printer( QPrinter::ScreenResolution ); // QPrinter::HighResolution );
+  QPrintPreviewDialog  preview( &printer, this );
+  connect( &preview, SIGNAL(paintRequested(QPrinter*)), SLOT(print(QPrinter*)) );
+  preview.exec();
+}
+
+/************************************ filePrint **************************************/
+
+/*void  MainWindow::filePrint()
+{
+  // display print dialog and if accepted print
+  QPrinter       printer( QPrinter::ScreenResolution );
+  QPrintDialog   dialog( &printer, this );
+  if ( dialog.exec() == QDialog::Accepted ) print( &printer );
+}
+
+/*************************************** print ***************************************/
+
+/*void  MainWindow::print( QPrinter* printer )
+{
+  // create painter for drawing print page
+  QPainter painter( printer );
+  int      w = printer->pageRect().width();
+  int      h = printer->pageRect().height();
+  QRect    page( 0, 0, w, h );
+
+  // create a font appropriate to page size
+  QFont    font = painter.font();
+  font.setPixelSize( (w+h) / 100 );
+  painter.setFont( font );
+
+  // draw labels in corners of page
+  painter.drawText( page, Qt::AlignTop    | Qt::AlignLeft, "QSimulate" );
+  painter.drawText( page, Qt::AlignBottom | Qt::AlignLeft, QString(getenv("USERNAME")) );
+  painter.drawText( page, Qt::AlignBottom | Qt::AlignRight,
+                    QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
+
+  // draw simulated landscape
+  page.adjust( w/20, h/20, -w/20, -h/20 );
+  m_scene->render( &painter, page );
+}
+
 /************************************** fileNew **************************************/
 
 void  MainWindow::fileNew()
 {
-  // if no stations (only default top-left scene anchor) then nothing to do
-  //if ( m_scene->items().count() >= 0) return;
+  m_undoStack->clear();
+  Scene*          newScene = new Scene( m_undoStack );
+  QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
+  view->setScene( newScene );
+  delete m_scene;
+  m_scene = newScene;
 
+  QTimer * timer = new QTimer();
+  myRect *player = new myRect(timer); //Creating player, and passing a Timer.
 
-  //check if user wants to save before starting new simulation
-  while (true)
-    switch ( QMessageBox::warning( this, "QSimulate",
-        "Do you want to save before starting new?",
-        QMessageBox::Discard | QMessageBox::Cancel ) )
-    {
+  m_scene->addItem(player);
+  //Set player in the middle.
+  player->setPos(800 / 2, 600/ 2); //Set player in the middle.
+  //Spawn Enemies
+  //QTimer * timer = new QTimer();
 
-      case QMessageBox::Discard:
-        // start new simulation
-        {
-          m_undoStack->clear();
-          Scene*          newScene = new Scene( m_undoStack );
-          QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
-          centralWidget()->setStyleSheet(QStringLiteral("background-image: url(:/new/files/Galaxy-illustration.jpg);"));
-          view->setScene( newScene );
-          delete m_scene;
-          m_scene = newScene;
+  //player->updateLevel(2);
 
-          QTimer * timer = new QTimer();
-          myRect *player = new myRect(timer); //Creating player, and passing a Timer.
+  QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
 
-          m_scene->addItem(player);
-          //Set player in the middle.
-          player->setPos(800 / 2, 600/ 2); //Set player in the middle.
-          //Spawn Enemies
-          //QTimer * timer = new QTimer();
-
-          QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
-
-          timer->start(1000/33); //Make an enemy every 2000 milli-seconds
-
-          return;
-        }
-    }
+  timer->start(1000/33); //Make an enemy every 2000 milli-seconds
 }
 
 /************************************ closeEvent *************************************/

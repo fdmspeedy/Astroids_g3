@@ -26,6 +26,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
+    //Maybe put in animation control.
+    float buildVelocity_X();
+    float buildVelocity_y();
+
+
     ~MainWindow();
 
 public slots:
@@ -47,6 +52,11 @@ private:
     QUndoStack * m_undoStack;           // undo stack for undo & redo of commands
     QUndoView * m_undoView;            // undo stack window to view undo & redo commands
     bool new_game = false;
+
+    //Maybe put in animation control.
+    float Velocity_X[];
+    float Velocity_Y[];
+
 };
 
 #endif // MAINWINDOW_H

@@ -2,6 +2,7 @@
 #define BULLET_H
 
 #include <QGraphicsPixmapItem>
+//#include <QtMath>
 #include <QObject>
 
 //Accompanying bullet class for ship.

@@ -11,6 +11,17 @@ public:
     Enemy();
 public slots:
     void move();
+
+private:
+    float angle;
+
+    int width;
+    int height;
+
+    float speed;
+    float speed_x;
+    float speed_y;
+
 };
 
 
