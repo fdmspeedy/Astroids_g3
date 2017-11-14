@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "playerobject.h"
+
 class Scene;
 class QUndoStack;
 class QUndoView;
@@ -9,6 +11,7 @@ class QPrinter;
 //class QAction;
 
 #include <QMainWindow>
+#include <QTimer>
 
 namespace Ui
 {
@@ -26,10 +29,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
-    //Maybe put in animation control.
-    float buildVelocity_X();
-    float buildVelocity_y();
-
+    //This controls the game flow. Recontruction Begins here.
+    bool gameState(int);
+    void spawnEnemy(int);
+    void collisionItems();
 
     ~MainWindow();
 
@@ -42,6 +45,8 @@ public slots:
   //void filePrintPreview();            // display print preview dialog
   //void filePrint();                   // display print dialog
   //void print( QPrinter* );            // draw print page
+  void printWhenPressed();
+  void spawnBullet();
 
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
@@ -51,11 +56,9 @@ private:
     Scene* m_scene;
     QUndoStack * m_undoStack;           // undo stack for undo & redo of commands
     QUndoView * m_undoView;            // undo stack window to view undo & redo commands
-    bool new_game = false;
-
-    //Maybe put in animation control.
-    float Velocity_X[];
-    float Velocity_Y[];
+    bool gameFlow = false;
+    QTimer * timer;
+    myRect * player;
 
 };
 

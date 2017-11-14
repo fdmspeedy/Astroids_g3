@@ -13,12 +13,21 @@ public:
     Bullet();
     void updateBullet(float, float, float);
 
+    //returns true if it hasn't collided with anything.
+    bool giveExistance();
+
+    //Changes ifExist variable to set up deletion.
+    void falseExistance();
+
 private:
+
     int b_width;
     int b_height;
     float standard_speed;
     float move_x;
     float move_y;
+
+    bool ifExist;
 
 
 public slots:

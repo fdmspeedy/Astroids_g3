@@ -9,6 +9,7 @@
 #include <QAction>
 #include <QTimer>
 #include <QDebug>
+#include <QList>
 
 #include <QUndoStack>
 #include <QXmlStreamWriter>

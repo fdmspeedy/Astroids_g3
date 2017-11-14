@@ -7,7 +7,7 @@
 
 //SLots and Signals
 Enemy::Enemy()
-{
+{ 
     width = 100;
     height = 100;
 
@@ -36,6 +36,11 @@ Enemy::Enemy()
     speed_x = speed*sin(qDegreesToRadians(angle));
 }
 
+char Enemy::giveType()
+{
+    return type;
+}
+
 //width: 800, height: 600.
 void Enemy::move()//Is being called periodcally.
 {
@@ -47,7 +52,7 @@ void Enemy::move()//Is being called periodcally.
 
     if ((y() + height) >= 800) //When bottom is touched, set to top.
     {
-        pos_x = qrand() % 600; //Move to the x_axis.
+        pos_x = qrand() % 600; //Move to the x_axis position from touched y-axis.
         setPos(pos_x, 0); //(x, y)
 
         angle += 45;

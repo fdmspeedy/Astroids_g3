@@ -9,10 +9,13 @@ class Enemy : public QObject, public QGraphicsRectItem
     Q_OBJECT
 public:
     Enemy();
+    char giveType();
 public slots:
     void move();
 
 private:
+    char type; //Ranges from B, M, S
+
     float angle;
 
     int width;

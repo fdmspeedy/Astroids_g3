@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "scene.h"
+#include "enemy.h"
+#include "bullet.h"
 #include "playerobject.h"
 
 #include <QGraphicsScene>
@@ -69,6 +71,95 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // add status bar message
     statusBar()->showMessage("QSimulate has started");
+}
+
+//Creation and deletion will happen within mainwindows.cpp
+bool MainWindow::gameState(int level)
+{
+    bool truth;
+
+    timer = new QTimer();
+    player = new myRect(timer); //Creating player, and passing a Timer.
+
+    m_scene->addItem(player);
+    //Set player in the middle.
+    player->setPos(800 / 2, 600/ 2); //Set player in the middle.
+
+    spawnEnemy(3);
+
+    QObject::connect(timer, SIGNAL(timeout()), player, SLOT(movement()));
+
+    //QObject::connect(timer, SIGNAL(timeout()), this, SLOT(printWhenPressed()));
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(spawnBullet()));
+    //spawnBullet()
+    timer->start(1000/33); //Make an enemy every 2000 milli-seconds
+
+    return true;
+}
+
+//Spawns certain enemies. Enemy Creation.
+void MainWindow::spawnEnemy(int limit)
+{
+    int count;
+    for (count = 0; count < limit; count++)
+    {
+        //qDebug() << "Enemy being made...";
+        //qDebug() << "Count: " << count;
+        Enemy * enemy = new Enemy();
+        m_scene->addItem(enemy);
+        QObject::connect(timer, SIGNAL(timeout()), enemy, SLOT(move()));
+    }
+    qDebug() << "Within Creating Enemy func.";
+}
+
+//This creates a bullet.
+void MainWindow::spawnBullet()
+{
+    float angle = player->giveAngle(),
+          move_x = player->giveSpeedX(),
+          move_y = player->giveSpeedY();
+
+    if (player->returnSpacePressed())
+    {
+        Bullet * bullet = new Bullet();
+
+        qDebug() << "x(): " << x() << " y(): " << y();
+
+        //Set position of the bullet.
+        bullet->setPos(player->x() + (50/2), player->y()-(66/2));
+        bullet->updateBullet(angle, move_x, move_y);
+
+        //qDebug() << "Bullet created";
+        m_scene->addItem(bullet);
+
+        //bullet->updateBullet(angle, speed_x, speed_y);
+
+        QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
+     }
+
+}
+
+//This would remove both astroid and bullet
+//from the scene, but not delete it.
+//The list is for that.
+void MainWindow::collisionItems()
+{
+    /*QList<QGraphicsItem *> colliding_items = collidingItems();
+    for (count = 0, n = colliding_items.size(); count < n ;++count)
+    {
+        if (typeid(*(colliding_items[count])) == typeid(Enemy))
+        {
+            //Remove both*
+            scene()->removeItem(colliding_items[count]);
+            scene()->removeItem();
+
+            //Freeing up memory used by deleted objects
+            delete colliding_items[count];
+            delete this;
+
+            return;
+        }
+    }*/
 }
 
 /*********************************** showMessage ************************************/
@@ -176,6 +267,14 @@ bool  MainWindow::fileOpen()
   return true;
 }
 
+void MainWindow::printWhenPressed()
+{
+    if(player->returnSpacePressed())
+    {
+        qDebug() << "Hello.";
+    }
+}
+
 /********************************* filePrintPreview **********************************/
 
 /*void  MainWindow::filePrintPreview()
@@ -227,6 +326,7 @@ bool  MainWindow::fileOpen()
 
 void  MainWindow::fileNew()
 {
+  bool current_state;
   m_undoStack->clear();
   Scene*          newScene = new Scene( m_undoStack );
   QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
@@ -234,20 +334,13 @@ void  MainWindow::fileNew()
   delete m_scene;
   m_scene = newScene;
 
-  QTimer * timer = new QTimer();
-  myRect *player = new myRect(timer); //Creating player, and passing a Timer.
+  view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view->show();
+  view->setFixedSize(800, 600);//Set the view to a fixed size.
 
-  m_scene->addItem(player);
-  //Set player in the middle.
-  player->setPos(800 / 2, 600/ 2); //Set player in the middle.
-  //Spawn Enemies
-  //QTimer * timer = new QTimer();
 
-  //player->updateLevel(2);
-
-  QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
-
-  timer->start(1000/33); //Make an enemy every 2000 milli-seconds
+  current_state = gameState(2);
 }
 
 /************************************ closeEvent *************************************/

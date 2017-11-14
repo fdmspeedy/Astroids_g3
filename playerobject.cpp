@@ -1,10 +1,10 @@
 #include "playerobject.h"
 #include "bullet.h"
 #include "enemy.h"
+
 #include <QGraphicsScene>
 #include <QKeyEvent>
 #include <QTransform>
-
 #include <QDebug>
 #include <iostream>
 #include <cmath>
@@ -18,6 +18,8 @@ myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
 {
     int count;
     limit = 0;
+
+    spacePressed = false;
 
     player_timer = timer;
 
@@ -35,7 +37,10 @@ myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
     setTransformOriginPoint(width, height);
 
     //Set Speed
-    speed = 2.0; //5 pixels at a time.
+    speed = 2.0;
+    speed_x = 0.0;
+    speed_y = 0.0;
+
     angle = 0.0;
 }
 
@@ -101,8 +106,7 @@ void myRect::keyPressEvent(QKeyEvent *event)
             move_y = -speed*cos(qDegreesToRadians(angle));
             move_x = speed*sin(qDegreesToRadians(angle));
 
-            qDebug() << "move_x: " << move_x
-                     << " move_y: " << move_y;
+            //qDebug() << "move_x: " << move_x << " move_y: " << move_y;
 
             setPos(x() + move_x, y()+ move_y);
             //This stacks the speed of the ship when going in one direction too much.
@@ -118,52 +122,69 @@ void myRect::keyPressEvent(QKeyEvent *event)
     }
     else if (event->key() == Qt::Key_Space)
     {
+        spacePressed = true;
         //Create Bullet.
-        Bullet * bullet = new Bullet();
+        /*Bullet * bullet = new Bullet();
 
         //Set position of the bullet.
-        bullet->setPos(x() + (width-5), y()-(height+10));
+        bullet->setPos(x() + (50/2), y()-(66/2));
         bullet->updateBullet(angle, speed_x, speed_y);
 
         //qDebug() << "Bullet created";
         scene()->addItem(bullet);
 
-        QObject::connect(player_timer, SIGNAL(timeout()), bullet, SLOT(move()));
+        QObject::connect(player_timer, SIGNAL(timeout()), bullet, SLOT(move()));*/
     }
 }
 
-void myRect::updateLevel(int given_level)
+bool myRect::returnSpacePressed()
+{
+    bool relay;
+    if (spacePressed)
+        relay = true;
+    else
+        relay = false;
+    spacePressed = false;
+    return relay;
+}
+
+float myRect::giveAngle()
+{
+    return angle;
+}
+
+float myRect::giveSpeedX()
+{
+    return speed_x;
+}
+
+float myRect::giveSpeedY()
+{
+    return speed_y;
+}
+
+/*void myRect::updateLevel(int given_level)
 {
     level = given_level;
 }
 
-void myRect::spawn()
+void myRect::createEnemy(int limit)
 {
     int count;
-
-    //This is just bad, imma fix it later.
-    if (enemy_amount > limit)
+    for (count = 0; count < limit; count++)
     {
-        for (count = 0; count < enemy_amount; count++)
-        {
-            qDebug() << "Enemy being made...";
-            qDebug() << "Count: " << count;
-            Enemy * enemy = new Enemy();
-            scene()->addItem(enemy);
-            QObject::connect(player_timer, SIGNAL(timeout()), enemy, SLOT(move()));
-            if (count == enemy_amount)
-                break;
-        }
-        limit = enemy_amount;
+        //qDebug() << "Enemy being made...";
+        //qDebug() << "Count: " << count;
+        Enemy * enemy = new Enemy();
+        scene()->addItem(enemy);
+        QObject::connect(player_timer, SIGNAL(timeout()), enemy, SLOT(move()));
     }
+    qDebug() << "Within Creating Enemy func.";
+}*/
 
+void myRect::movement()
+{
     //Player velocity is being moved.setPos()
     setPos(x()+ speed_x, y()-speed_y);//speed_y
-
 }
 
-void myRect::respond()
-{
-    qDebug() << "Responding ...";
-
-}

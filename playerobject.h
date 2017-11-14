@@ -1,5 +1,7 @@
 #ifndef MYRECT
 #define MYRECT
+#include "bullet.h"
+
 #include <QGraphicsItem>
 #include <animation_control.h>
 
@@ -14,14 +16,17 @@ class myRect : public QObject, public QGraphicsPixmapItem
 public:
     myRect(QTimer *);
     void keyPressEvent(QKeyEvent * event);
-    void updateLevel(int);
+    bool returnSpacePressed();
+    float giveAngle();
+    float giveSpeedX();
+    float giveSpeedY();
 
 public slots:
-    void spawn();
-    void respond();
+    void movement();
 
 private:
     QTimer * player_timer;
+    bool spacePressed;
 
     int level = 1;
     int enemy_amount = 2;
@@ -35,7 +40,6 @@ private:
     float speed;
     float speed_x;
     float speed_y;
-    //void DoCollision();
 
 };
 
