@@ -28,6 +28,8 @@
 #include <QMessageBox>
 #include <QToolBar>
 
+QList<Enemy*> AstList;
+QList<Bullet*> BullList;
 /*************************************************************************************/
 /*********************** Main application window for QSimulate ***********************/
 /*************************************************************************************/
@@ -106,6 +108,7 @@ void MainWindow::spawnEnemy(int limit)
         //qDebug() << "Enemy being made...";
         //qDebug() << "Count: " << count;
         Enemy * enemy = new Enemy();
+        AstList.insert(count, enemy);//Adds enemy to list use subscript value to access later.
         m_scene->addItem(enemy);
         QObject::connect(timer, SIGNAL(timeout()), enemy, SLOT(move()));
     }
@@ -122,7 +125,9 @@ void MainWindow::spawnBullet()
     if (player->returnSpacePressed())
     {
         Bullet * bullet = new Bullet();
-
+        int count = BullList.size();//Checks size of bullet list
+        count++;//Moves counter to next position
+        BullList.insert(count, bullet);//Adds bullet to list using subscript value to access later.
         qDebug() << "x(): " << x() << " y(): " << y();
 
         //Set position of the bullet.

@@ -12,6 +12,7 @@ class QPrinter;
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QList>
 
 namespace Ui
 {
@@ -47,6 +48,7 @@ public slots:
   //void print( QPrinter* );            // draw print page
   void printWhenPressed();
   void spawnBullet();
+
 
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
