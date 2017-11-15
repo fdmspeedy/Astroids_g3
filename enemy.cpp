@@ -47,19 +47,23 @@ void Enemy::move()//Is being called periodcally.
     int pos_x;
     int pos_y = qrand() % 600;
 
+    //Width scene: 800, height scene: 600
+
     //move the enemy " Random ".
     setPos(x()+speed_x, y()+speed_y);
 
-    if ((y() + height) >= 800) //When bottom is touched, set to top.
+    //Enter: bottom. Exit: top side
+    if ((y() + height) >= 700) //When bottom is touched, set to top.
     {
-        pos_x = qrand() % 600; //Move to the x_axis position from touched y-axis.
+        pos_x = qrand() % 800; //Move to the x_axis position from touched y-axis.
         setPos(pos_x, 0); //(x, y)
 
-        angle += 45;
+        angle += qrand() % 45;
         if (angle > 360)
             angle -= 360;
         else if (angle < 0)
             angle += 360;
+
 
         setRotation(angle);
 
@@ -67,9 +71,10 @@ void Enemy::move()//Is being called periodcally.
         speed_x = speed*sin(qDegreesToRadians(angle));
     }
 
-    else if ((y() + height) < 0)
+    //Enter: top. Exit: the left side
+    else if ((y() + height) < -100)
     {
-        pos_y = qrand() % 800;
+        pos_y = qrand() % 600;
         setPos(0, pos_y);
 
         angle += 45;
@@ -84,12 +89,14 @@ void Enemy::move()//Is being called periodcally.
         speed_x = speed*sin(qDegreesToRadians(angle));
 
     }
-    else if ((x() + width) < 0)
-    {
-        pos_x = qrand() % 600;
-        setPos(pos_x, 0);
 
-        angle += 45;
+    //Enter: Left side. Exit: Right side
+    else if ((x() + width) < -100)
+    {
+        pos_y = qrand() % 600;
+        setPos(800, pos_y);
+
+        angle += qrand() % 45;
         if (angle > 360)
             angle -= 360;
         else if (angle < 0)
@@ -101,12 +108,14 @@ void Enemy::move()//Is being called periodcally.
         speed_x = speed*sin(qDegreesToRadians(angle));
 
     }
-    else if ((x() + width) >= 600) //Simple.
-    {
-        pos_y = qrand() % 800;
-        setPos(0, pos_y);
 
-        angle += 45;
+    //Enter: Right Side. Exit: Bottom Side.
+    else if ((x() + width) >= 900)
+    {
+        pos_x = qrand() % 800;
+        setPos(pos_x, 600);
+
+        angle -= 90;
         if (angle > 360)
             angle -= 360;
         else if (angle < 0)

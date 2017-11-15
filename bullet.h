@@ -19,13 +19,15 @@ public:
     //Changes ifExist variable to set up deletion.
     void falseExistance();
 
+    //Given angle,
+
 private:
 
     int b_width;
     int b_height;
     float standard_speed;
-    float move_x;
-    float move_y;
+    float speed_x;
+    float speed_y;
 
     bool ifExist;
 

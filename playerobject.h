@@ -20,6 +20,8 @@ public:
     float giveAngle();
     float giveSpeedX();
     float giveSpeedY();
+    int giveWidth();
+    int giveHeight();
 
 public slots:
     void movement();

@@ -163,6 +163,16 @@ float myRect::giveSpeedY()
     return speed_y;
 }
 
+int myRect::giveWidth()
+{
+    return width;
+}
+
+int myRect::giveHeight()
+{
+    return height;
+}
+
 /*void myRect::updateLevel(int given_level)
 {
     level = given_level;

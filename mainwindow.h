@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include "playerobject.h"
+#include "enemy.h"
+#include "bullet.h"
 
 class Scene;
 class QUndoStack;
@@ -49,7 +51,6 @@ public slots:
   void printWhenPressed();
   void spawnBullet();
 
-
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
 
@@ -61,6 +62,9 @@ private:
     bool gameFlow = false;
     QTimer * timer;
     myRect * player;
+
+    QList<Enemy*> AstList;
+    QList<Bullet*> BullList;
 
 };
 

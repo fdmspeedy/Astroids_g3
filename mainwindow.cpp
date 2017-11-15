@@ -14,6 +14,8 @@
 #include <QStatusBar>
 #include <QTimer>
 #include <QDebug>
+#include <QtMath>
+#include <QList>
 
 #include <QUndoStack>
 #include <QUndoView>
@@ -21,15 +23,13 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QDateTime>
-//#include <QPrinter>
-//#include <QPrintPreviewDialog>
-//#include <QPrintDialog>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QToolBar>
 
-QList<Enemy*> AstList;
-QList<Bullet*> BullList;
+//QList<Enemy*> AstList;
+//QList<Bullet*> BullList;
+
 /*************************************************************************************/
 /*********************** Main application window for QSimulate ***********************/
 /*************************************************************************************/
@@ -75,26 +75,32 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     statusBar()->showMessage("QSimulate has started");
 }
 
-//Creation and deletion will happen within mainwindows.cpp
+
+//This creates the game (level) when new is pressed.
+//It adds the essentials to the scene
+// and connects important functions to the Timer.
 bool MainWindow::gameState(int level)
 {
-    bool truth;
-
-    timer = new QTimer();
+    timer = new QTimer();       //Creating a new timer.
     player = new myRect(timer); //Creating player, and passing a Timer.
 
+    //Add player to the scene.
     m_scene->addItem(player);
+
     //Set player in the middle.
     player->setPos(800 / 2, 600/ 2); //Set player in the middle.
 
-    spawnEnemy(3);
+    //Spawns # amount of enemies based (eventually) on level.
+    spawnEnemy(10);
 
+    //Connect timer to player movement(), so player can move.
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(movement()));
 
-    //QObject::connect(timer, SIGNAL(timeout()), this, SLOT(printWhenPressed()));
+    //Connect timer to bullet creation, so bullet can move.
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(spawnBullet()));
-    //spawnBullet()
-    timer->start(1000/33); //Make an enemy every 2000 milli-seconds
+
+    //Start the timer to go of every 30-ish seconds.
+    timer->start(1000/33);
 
     return true;
 }
@@ -102,14 +108,18 @@ bool MainWindow::gameState(int level)
 //Spawns certain enemies. Enemy Creation.
 void MainWindow::spawnEnemy(int limit)
 {
-    int count;
+    int count; //Loop counter,
+
+    //Creates enemy depending on the limit given.
     for (count = 0; count < limit; count++)
     {
         //qDebug() << "Enemy being made...";
         //qDebug() << "Count: " << count;
         Enemy * enemy = new Enemy();
         AstList.insert(count, enemy);//Adds enemy to list use subscript value to access later.
-        m_scene->addItem(enemy);
+        m_scene->addItem(enemy);     //Adds enemy to the scene.
+
+        //Connects astroid movement to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), enemy, SLOT(move()));
     }
     qDebug() << "Within Creating Enemy func.";
@@ -118,29 +128,34 @@ void MainWindow::spawnEnemy(int limit)
 //This creates a bullet.
 void MainWindow::spawnBullet()
 {
+    int count; //List counter.
+
+    //Conveys player's position information to the bullet.
     float angle = player->giveAngle(),
           move_x = player->giveSpeedX(),
           move_y = player->giveSpeedY();
 
     if (player->returnSpacePressed())
     {
-        Bullet * bullet = new Bullet();
-        int count = BullList.size();//Checks size of bullet list
-        count++;//Moves counter to next position
-        BullList.insert(count, bullet);//Adds bullet to list using subscript value to access later.
-        qDebug() << "x(): " << x() << " y(): " << y();
+        Bullet * bullet = new Bullet(); //Makes a new Bullet.
 
-        //Set position of the bullet.
-        bullet->setPos(player->x() + (50/2), player->y()-(66/2));
+        count = BullList.size();        //Checks size of bullet list
+        count++;                        //Moves counter to next position
+        BullList.insert(count, bullet); //Adds bullet to list using subscript value to access later.
+
+        qDebug() << "BULLIST last: " << BullList.last()->giveExistance();
+        //qDebug() << "x: " << (player->x() + player->giveSpeedX()) << " y: " << (player->y() - player->giveSpeedY());
+
+        //Sets position of bullet, and then updates angle and (stacked) speed.
+        bullet->setPos((player->x() + player->giveWidth()), (player->y()));
         bullet->updateBullet(angle, move_x, move_y);
 
-        //qDebug() << "Bullet created";
+        //Adds created Bullet to the Scene.
         m_scene->addItem(bullet);
 
-        //bullet->updateBullet(angle, speed_x, speed_y);
-
+        //Connects movement of bullet to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
-     }
+    }
 
 }
 
@@ -156,12 +171,11 @@ void MainWindow::collisionItems()
         {
             //Remove both*
             scene()->removeItem(colliding_items[count]);
-            scene()->removeItem();
+            scene()->removeItem(this);
 
             //Freeing up memory used by deleted objects
             delete colliding_items[count];
             delete this;
-
             return;
         }
     }*/
@@ -170,7 +184,7 @@ void MainWindow::collisionItems()
 /*********************************** showMessage ************************************/
 void  MainWindow::showMessage( QString msg )
 {
-  // display message on main window status bar
+    //display message on main window status bar
     statusBar()->showMessage( msg );
 }
 
@@ -325,9 +339,8 @@ void MainWindow::printWhenPressed()
   // draw simulated landscape
   page.adjust( w/20, h/20, -w/20, -h/20 );
   m_scene->render( &painter, page );
-}
+}*/
 
-/************************************** fileNew **************************************/
 
 void  MainWindow::fileNew()
 {
@@ -336,16 +349,19 @@ void  MainWindow::fileNew()
   Scene*          newScene = new Scene( m_undoStack );
   QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
   view->setScene( newScene );
-  delete m_scene;
-  m_scene = newScene;
+  delete m_scene;             //Delete old scene.
+  m_scene = newScene;         //Create a new scene.
 
+  //Sets up the view.
+  view->setAlignment( Qt::AlignLeft | Qt::AlignTop );
+  view->setFrameStyle( 0 );
+  setCentralWidget( view );
   view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->show();
   view->setFixedSize(800, 600);//Set the view to a fixed size.
 
-
-  current_state = gameState(2);
+  current_state = gameState(2);//Creates a new game state.
 }
 
 /************************************ closeEvent *************************************/
