@@ -4,16 +4,23 @@
 #include <QGraphicsRectItem>
 #include <QObject>
 
-class Enemy : public QObject, public QGraphicsRectItem
+class Enemy : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
     Enemy();
     char giveType();
+    bool giveState();
+    bool falseState();
+    float givePosX();
+    float givePosY();
+
 public slots:
     void move();
 
 private:
+    bool ifExist;
+
     char type; //Ranges from B, M, S
 
     float angle;

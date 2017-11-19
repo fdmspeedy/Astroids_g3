@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QGraphicsScene>
 #include <QDebug>
+#include <QVariant>
 #include <cmath>
 #include <QtMath>
 #include <QList>
@@ -52,27 +53,69 @@ void Bullet::falseExistance()
     ifExist = false;
 }
 
+//Return collided item
+float Bullet::giveEnemyX()
+{
+    return enemy_X;
+}
+
+float Bullet::giveEnemyY()
+{
+    return enemy_Y;
+}
+
+bool Bullet::enemyDown()
+{
+    boogieDown = false;
+    return true;
+}
+
+void Bullet::enemy_list(QList<Enemy *> & aList)
+{
+    qDebug() << "AFAFASFASFASFD";
+    AstList = aList;
+}
+
 //angle, speed, position.
 void Bullet::move()//Is being called periodcally.
 {
-    //int count, n;
+    int count, n;
     //If bullet collides with enemy destroy both.
-    /*QList<QGraphicsItem *> colliding_items = collidingItems();
+    colliding_items = collidingItems();
     for (count = 0, n = colliding_items.size(); count < n ;++count)
     {
         if (typeid(*(colliding_items[count])) == typeid(Enemy))
         {
-            //Remove both*
+
+            //Remove both from the scene.
             scene()->removeItem(colliding_items[count]);
             scene()->removeItem(this);
+
+            //qDebug() << "holding?: " << holding;
+            qDebug() << "DATA?: " << & colliding_items[count];
+            qDebug() << "DATA W/ * ?: ";
+
+            qDebug() << "DATA X?: " << colliding_items[count]->x();
+            qDebug() << "DATA y?: " << colliding_items[count]->y();
+            //qDebug() << "Adress??: " << colliding_items[count][0];
+
+            enemy_X = colliding_items[count]->x();
+            enemy_Y = colliding_items[count]->y();
+
+            qDebug() << "Move(): enemy_X: " << enemy_X;
+            qDebug() << "Move(): enemy_Y: " << enemy_Y;
 
             //Freeing up memory used by deleted objects
             delete colliding_items[count];
             delete this;
 
+            //Sets variables to false in order to set up for deletion.
+            ifExist = false;
+            boogieDown = true;
+
             return;
         }
-    }*/
+    }
 
     //move the bullet " up ".
     //qDebug() << "x(): " << x() << " y(): " << y();
@@ -85,6 +128,7 @@ void Bullet::move()//Is being called periodcally.
     if ((y() < 0) || (y() > 600) || (x() < 0) || (x() > 800))
     {
         scene()->removeItem(this);
+        ifExist = false;
         delete this;
         qDebug() << "Bullet Deleted ...";
     }

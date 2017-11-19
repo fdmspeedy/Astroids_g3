@@ -27,8 +27,8 @@
 #include <QMessageBox>
 #include <QToolBar>
 
-//QList<Enemy*> AstList;
-//QList<Bullet*> BullList;
+#include <iostream>
+using namespace std;
 
 /*************************************************************************************/
 /*********************** Main application window for QSimulate ***********************/
@@ -91,7 +91,7 @@ bool MainWindow::gameState(int level)
     player->setPos(800 / 2, 600/ 2); //Set player in the middle.
 
     //Spawns # amount of enemies based (eventually) on level.
-    spawnEnemy(10);
+    spawnEnemy(1);
 
     //Connect timer to player movement(), so player can move.
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(movement()));
@@ -119,6 +119,9 @@ void MainWindow::spawnEnemy(int limit)
         AstList.insert(count, enemy);//Adds enemy to list use subscript value to access later.
         m_scene->addItem(enemy);     //Adds enemy to the scene.
 
+        //qDebug() << "adress?: " << enemy;
+        cout << "adress?: " << enemy << endl;
+
         //Connects astroid movement to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), enemy, SLOT(move()));
     }
@@ -143,7 +146,7 @@ void MainWindow::spawnBullet()
         count++;                        //Moves counter to next position
         BullList.insert(count, bullet); //Adds bullet to list using subscript value to access later.
 
-        qDebug() << "BULLIST last: " << BullList.last()->giveExistance();
+        //qDebug() << "BULLIST last: " << BullList.last()->giveExistance();
         //qDebug() << "x: " << (player->x() + player->giveSpeedX()) << " y: " << (player->y() - player->giveSpeedY());
 
         //Sets position of bullet, and then updates angle and (stacked) speed.
@@ -156,29 +159,22 @@ void MainWindow::spawnBullet()
         //Connects movement of bullet to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
     }
-
 }
 
-//This would remove both astroid and bullet
-//from the scene, but not delete it.
-//The list is for that.
+//This determines where the astroid that collided is
+//and then sets it to false and removes it from scene.
 void MainWindow::collisionItems()
 {
-    /*QList<QGraphicsItem *> colliding_items = collidingItems();
-    for (count = 0, n = colliding_items.size(); count < n ;++count)
-    {
-        if (typeid(*(colliding_items[count])) == typeid(Enemy))
-        {
-            //Remove both*
-            scene()->removeItem(colliding_items[count]);
-            scene()->removeItem(this);
+    //qDebug() << "Hi";
+    /*int count, list_len = AstList.length();
+    //float enemy_pos_X, enemy_pos_Y;
 
-            //Freeing up memory used by deleted objects
-            delete colliding_items[count];
-            delete this;
-            return;
-        }
+    //Loop until you find the enemy to be deleted.
+    for (count = 0; count < list_len; count++)
+    {
+        if (AstList[count]->x() > )
     }*/
+
 }
 
 /*********************************** showMessage ************************************/

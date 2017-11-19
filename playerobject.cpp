@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QTransform>
 #include <QDebug>
+#include <typeinfo>
 #include <iostream>
 #include <cmath>
 #include <QtMath>
@@ -16,8 +17,7 @@ using namespace std;
 //The Timer is passed in order to create bullet and astroid movement.
 myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
 {
-    int count;
-    limit = 0;
+    player_health = 100.0; //Total starting health.
 
     spacePressed = false;
 
@@ -100,7 +100,7 @@ void myRect::keyPressEvent(QKeyEvent *event)
     {
         if (pos().y() > 0)
         {
-            qDebug() << "(x, y): " << x() << " / " << y();
+            //qDebug() << "(x, y): " << x() << " / " << y();
 
             //It works. Don't Touch it. :)
             move_y = -speed*cos(qDegreesToRadians(angle));
@@ -194,6 +194,28 @@ void myRect::createEnemy(int limit)
 
 void myRect::movement()
 {
+    int count, n;
+
+    QList<QGraphicsItem *> colliding_items = collidingItems();
+
+    //If bullet collides with enemy destroy both.
+    colliding_items = collidingItems();
+    for (count = 0, n = colliding_items.size(); count < n ;++count)
+    {
+        if (typeid(*(colliding_items[count])) == typeid(Enemy))
+        {
+            //Remove both from the scene.
+            scene()->removeItem(colliding_items[count]);
+
+            delete colliding_items[count];
+
+            player_health -= 15;
+
+            return;
+        }
+    }
+
+
     //Player velocity is being moved.setPos()
     setPos(x()+ speed_x, y()-speed_y);//speed_y
 }

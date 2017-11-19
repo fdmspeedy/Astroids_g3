@@ -35,8 +35,6 @@ public:
     //This controls the game flow. Recontruction Begins here.
     bool gameState(int);
     void spawnEnemy(int);
-    void collisionItems();
-
     ~MainWindow();
 
 public slots:
@@ -50,6 +48,7 @@ public slots:
   //void print( QPrinter* );            // draw print page
   void printWhenPressed();
   void spawnBullet();
+  void collisionItems();
 
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
@@ -59,12 +58,17 @@ private:
     Scene* m_scene;
     QUndoStack * m_undoStack;           // undo stack for undo & redo of commands
     QUndoView * m_undoView;            // undo stack window to view undo & redo commands
+
     bool gameFlow = false;
+
     QTimer * timer;
     myRect * player;
 
     QList<Enemy*> AstList;
     QList<Bullet*> BullList;
+
+    float enemyPosX;
+    float enemyPosY;
 
 };
 

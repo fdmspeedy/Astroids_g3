@@ -3,5 +3,6 @@
         <file>ship_01.png</file>
         <file>bullet_Purple.png</file>
         <file>Standard_Ship_01.png</file>
+        <file>astroid_image.png</file>
     </qresource>
 </RCC>

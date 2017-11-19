@@ -8,8 +8,12 @@
 //SLots and Signals
 Enemy::Enemy()
 { 
-    width = 100;
-    height = 100;
+    //Set truth bool to true.
+    ifExist = true;
+
+    //Define dimensions
+    width = 150;
+    height = 120;
 
     //Random Position
     int random_x = qrand() % 800;
@@ -18,8 +22,8 @@ Enemy::Enemy()
     //Random Angle. Maybe not needed.
     angle = qrand() % 360;
 
-    //Drew the Rect
-    setRect(0,0, width, height);
+    //Insert Image of astroid.
+    setPixmap(QPixmap(":/new/files/astroid_image.png"));
 
     //Set Random position
     setPos(random_x, random_y);
@@ -41,14 +45,37 @@ char Enemy::giveType()
     return type;
 }
 
+bool Enemy::giveState()
+{
+    return ifExist;
+}
+
+bool Enemy::falseState()
+{
+    ifExist = false;
+}
+
+float Enemy::givePosX()
+{
+    return x();
+}
+
+float Enemy::givePosY()
+{
+    return y();
+}
+
 //width: 800, height: 600.
 void Enemy::move()//Is being called periodcally.
 {
     int pos_x;
     int pos_y = qrand() % 600;
 
-    //Width scene: 800, height scene: 600
+    //qDebug() << "Enemy_X: " << x() << " Enemy_Y: " << y();
+    //qDebug() << "Addess??: " << this;
 
+
+    //Width scene: 800, height scene: 600
     //move the enemy " Random ".
     setPos(x()+speed_x, y()+speed_y);
 
