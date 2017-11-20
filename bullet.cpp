@@ -1,91 +1,46 @@
-#include "bullet.h"
-#include "enemy.h"
-#include <QTimer>
+/*************************************************************************************/
+
+/********************** Represents a bullet in the simulation ************************/
+
+/*************************************************************************************/
 #include <QGraphicsScene>
-#include <QDebug>
-#include <cmath>
-#include <QtMath>
-#include <QList>
+#include <QTimer>
+#include <QGraphicsRectItem>
+#include <QPainter>
 #include <typeinfo>
+#include "scene.h"
+#include "bullet.h"
+#include "asteroids.h"
 
-//SLots and Signals
-Bullet::Bullet(): QObject(), QGraphicsPixmapItem()
+/****** Constructor ******/
+Bullet::Bullet()
 {
-    ifExist = true;
+    collided = false;
+    QTimer *timer = new QTimer();
+    connect(timer,SIGNAL(timeout()),this,SLOT(move()));//does movement based on a timer
+    timer->start(20);
 
-    b_width = 10/2;
-    b_height = 54/2;
-
-    standard_speed = 5.0;
-    //move_x = standard_speed + speed_x;
-    //move_y = standard_speed + speed_y;
-
-    //Drew the Rect
-    setPixmap(QPixmap(":/new/files/bullet_Purple.png"));
-
-    setTransformOriginPoint(b_width, b_height);
 }
 
-void Bullet::updateBullet(float angle, float delta_x, float delta_y)
+/****** controls movement of bullet ******/
+void Bullet::move()
 {
-
-    //It works. Don't Touch it. :)
-    speed_x = (standard_speed)*sin(qDegreesToRadians(angle));
-    speed_y = -(standard_speed)*cos(qDegreesToRadians(angle));
-
-    setRotation(angle);
-
-    speed_x += delta_x;
-    speed_y -= delta_y;
-}
-
-//Returns current state
-bool Bullet::giveExistance()
-{
-    return ifExist;
-}
-
-//Sets existance of current to false
-//and sets up bullet for deletion.
-void Bullet::falseExistance()
-{
-    ifExist = false;
-}
-
-//angle, speed, position.
-void Bullet::move()//Is being called periodcally.
-{
-    //int count, n;
-    //If bullet collides with enemy destroy both.
-    /*QList<QGraphicsItem *> colliding_items = collidingItems();
-    for (count = 0, n = colliding_items.size(); count < n ;++count)
-    {
-        if (typeid(*(colliding_items[count])) == typeid(Enemy))
-        {
-            //Remove both*
-            scene()->removeItem(colliding_items[count]);
+    if(not collided){
+        //Check if bullet is off screen and deletes it if it is
+        if(x() >= dw.width()*0.8 or x() <= 0 or y() >= dw.height()*0.8 or y() <= 0){
+            collided = true;
             scene()->removeItem(this);
-
-            //Freeing up memory used by deleted objects
-            delete colliding_items[count];
-            delete this;
-
             return;
         }
-    }*/
-
-    //move the bullet " up ".
-    //qDebug() << "x(): " << x() << " y(): " << y();
-    //qDebug() << "The constant changes within bullet:";
-    //qDebug() << "move_x: " << move_x << " move_y: " << move_y;
-
-    setPos(x() + speed_x, y() + speed_y);
-
-    //When the bullet goes beyond the bounds.
-    if ((y() < 0) || (y() > 600) || (x() < 0) || (x() > 800))
-    {
-        scene()->removeItem(this);
-        delete this;
-        qDebug() << "Bullet Deleted ...";
+        //Move the bullet with respect to its angle
+        setPos(x() + 20*sin(angle*(3.141592654/180)),y()- 20*cos(angle*(3.141592654/180)));
     }
+    else
+        return;
 }
+void Bullet::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)// implement virtual paint function
+{
+    painter->setPen( QPen( Qt::white, 2 ) );
+    painter->drawRect(0,0,2,5);//the bullet
+}
+

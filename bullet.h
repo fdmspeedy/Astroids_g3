@@ -1,41 +1,23 @@
 #ifndef BULLET_H
 #define BULLET_H
 
-#include <QGraphicsPixmapItem>
-//#include <QtMath>
-#include <QObject>
+#include <QGraphicsRectItem>
+#include <QDesktopWidget>
+#include <QtMath>
 
-//Accompanying bullet class for ship.
-class Bullet : public QObject, public QGraphicsPixmapItem
+/****** Class for the bullet ******/
+class Bullet: public QObject ,public QGraphicsRectItem
 {
     Q_OBJECT
-public:
-    Bullet();
-    void updateBullet(float, float, float);
-
-    //returns true if it hasn't collided with anything.
-    bool giveExistance();
-
-    //Changes ifExist variable to set up deletion.
-    void falseExistance();
-
-    //Given angle,
-
-private:
-
-    int b_width;
-    int b_height;
-    float standard_speed;
-    float speed_x;
-    float speed_y;
-
-    bool ifExist;
-
-
-public slots:
-    void move();
+    public:
+        Bullet(); //Default Constructor
+        int  angle; //angle of bullet
+        QDesktopWidget dw; //Bounds of the screen
+        bool collided; //Determines if bullet has collided with asteroid or outside edge
+        void paint(QPainter*, const QStyleOptionGraphicsItem *option, QWidget *widget);// implement virtual paint function
+        QRectF   boundingRect() const//bounding rectangle allowing no screen movement
+            {return QRectF(0, 0, 0, 0);}
+    public slots:
+        void move();
 };
-
-
 #endif // BULLET_H
-

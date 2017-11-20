@@ -1,25 +1,34 @@
-/*Team Memebers:
--Freddie Martinez
--Joshua L. Douglas
--Aaron O. Gomez
--Hector Rios
--Eric J. Smrkovsky
--Scott D. Farrow*/
-
+//Asteroids Project
+//Group 2
+//Travis Walker
+//Preston Moore
+//Rohin Singh
+//Edgar Gomez
+//Khoa Truong
+//Lal Angdembe
+#include <QDesktopWidget>
 #include <QApplication>
-
-#include "mainwindow.h"
 #include "scene.h"
-
-//This is up to step 6, including step 6.
+#include "mainwindow.h"
 int main(int argc, char *argv[])
 {
-    // create main event loop handler and parse command line arguments
-    QApplication a(argc, argv);
+  //Seed random number generator
+    srand(time(0));
 
-    // create application main window & enter main event loop
+  // create main event loop handler and parse command line arguments
+    QApplication app(argc, argv);
+
+  // create application main window & enter main event loop
     MainWindow window;
+    QDesktopWidget dw;
+
+  //window's size is fixed at 80% of the user's sceen size
+    int x=dw.width()*0.8;
+    int y=dw.height()*0.8;
+    window.setFixedSize(x,y);
+
+  //Show the window
     window.show();
 
-    return a.exec();
+    return app.exec();
 }
