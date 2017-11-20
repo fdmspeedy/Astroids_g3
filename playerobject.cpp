@@ -195,7 +195,6 @@ void myRect::createEnemy(int limit)
 void myRect::movement()
 {
     int count, n;
-
     QList<QGraphicsItem *> colliding_items = collidingItems();
 
     //If bullet collides with enemy destroy both.
@@ -217,6 +216,24 @@ void myRect::movement()
 
 
     //Player velocity is being moved.setPos()
-    setPos(x()+ speed_x, y()-speed_y);//speed_y
+    //from: Top. To: Bottom.
+    if (y() < 0)
+        setPos(x() + speed_x, 580-speed_y);
+
+    //from: Bottom. To: Top.
+    else if (y() > 600)
+        setPos(x() + speed_x, 3-speed_y);
+
+    //From: Left side. To: Right Side.
+    else if(x() < 0)
+        setPos(790 + speed_x, y()-speed_y);
+
+    //From: Right side. To: Left side.
+    else if (x() > 800)
+        setPos(3 + speed_x, y()-speed_y);
+
+    //Normal Movement of Ship.
+    else
+        setPos(x()+ speed_x, y()-speed_y);
 }
 

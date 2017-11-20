@@ -14,6 +14,7 @@ public:
     bool falseState();
     float givePosX();
     float givePosY();
+    void updateState();
 
 public slots:
     void move();

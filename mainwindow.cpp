@@ -91,7 +91,7 @@ bool MainWindow::gameState(int level)
     player->setPos(800 / 2, 600/ 2); //Set player in the middle.
 
     //Spawns # amount of enemies based (eventually) on level.
-    spawnEnemy(1);
+    spawnEnemy(2);
 
     //Connect timer to player movement(), so player can move.
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(movement()));
@@ -113,8 +113,6 @@ void MainWindow::spawnEnemy(int limit)
     //Creates enemy depending on the limit given.
     for (count = 0; count < limit; count++)
     {
-        //qDebug() << "Enemy being made...";
-        //qDebug() << "Count: " << count;
         Enemy * enemy = new Enemy();
         AstList.insert(count, enemy);//Adds enemy to list use subscript value to access later.
         m_scene->addItem(enemy);     //Adds enemy to the scene.
@@ -128,6 +126,21 @@ void MainWindow::spawnEnemy(int limit)
     qDebug() << "Within Creating Enemy func.";
 }
 
+void MainWindow::checkListItem()
+{
+    int countA, countB,
+        current_list_len = BullList.size(),
+        sceneCount, sceneItems = m_scene->items().size();
+
+    QList<QGraphicsItem *> OnScene = m_scene->items();
+
+    for (sceneCount = 0; sceneCount < sceneItems; sceneCount++)
+    {
+        //qDebug() << "reference: " << *OnScene[sceneCount];
+    }
+    //for (countA = 0; countA < current_list_len; countA++)
+}
+
 //This creates a bullet.
 void MainWindow::spawnBullet()
 {
@@ -137,7 +150,6 @@ void MainWindow::spawnBullet()
     float angle = player->giveAngle(),
           move_x = player->giveSpeedX(),
           move_y = player->giveSpeedY();
-
     if (player->returnSpacePressed())
     {
         Bullet * bullet = new Bullet(); //Makes a new Bullet.
@@ -145,6 +157,8 @@ void MainWindow::spawnBullet()
         count = BullList.size();        //Checks size of bullet list
         count++;                        //Moves counter to next position
         BullList.insert(count, bullet); //Adds bullet to list using subscript value to access later.
+
+        //qDebug() << "Spawned Bullet Address: " << & bullet;
 
         //qDebug() << "BULLIST last: " << BullList.last()->giveExistance();
         //qDebug() << "x: " << (player->x() + player->giveSpeedX()) << " y: " << (player->y() - player->giveSpeedY());
@@ -159,6 +173,9 @@ void MainWindow::spawnBullet()
         //Connects movement of bullet to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
     }
+
+    //checkListItem();
+
 }
 
 //This determines where the astroid that collided is

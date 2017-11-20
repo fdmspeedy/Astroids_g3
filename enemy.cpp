@@ -3,6 +3,7 @@
 #include <QtMath>
 #include <QGraphicsScene>
 #include <QDebug>
+#include <typeinfo>
 #include <stdlib.h> //rand()
 
 //SLots and Signals
@@ -65,6 +66,12 @@ float Enemy::givePosY()
     return y();
 }
 
+void Enemy::updateState()
+{
+    speed_y = -speed*cos(qDegreesToRadians(angle));
+    speed_x = speed*sin(qDegreesToRadians(angle));
+}
+
 //width: 800, height: 600.
 void Enemy::move()//Is being called periodcally.
 {
@@ -74,6 +81,26 @@ void Enemy::move()//Is being called periodcally.
     //qDebug() << "Enemy_X: " << x() << " Enemy_Y: " << y();
     //qDebug() << "Addess??: " << this;
 
+
+    int count, n;
+    QList<QGraphicsItem *> colliding_items = collidingItems();
+
+    //If bullet collides with enemy destroy both.
+    for (count = 0, n = colliding_items.size(); count < n ;++count)
+    {
+        if (typeid(*(colliding_items[count])) == typeid(Enemy))
+        {
+            qDebug() << "colliding with Enemy v Enemy";
+
+            angle += 160;
+            (angle < 0) ? angle += 360 : angle = angle;
+            (angle > 360) ? angle -= 360 : angle = angle;
+
+            count = n;
+        }
+    }
+
+    updateState();
 
     //Width scene: 800, height scene: 600
     //move the enemy " Random ".

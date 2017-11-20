@@ -35,6 +35,7 @@ public:
     //This controls the game flow. Recontruction Begins here.
     bool gameState(int);
     void spawnEnemy(int);
+    void checkListItem();
     ~MainWindow();
 
 public slots:
