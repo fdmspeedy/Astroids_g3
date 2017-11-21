@@ -1,4 +1,7 @@
+#include "playerobject.h"
+#include "bullet.h"
 #include "enemy.h"
+
 #include <QTimer>
 #include <QtMath>
 #include <QGraphicsScene>
@@ -7,30 +10,69 @@
 #include <stdlib.h> //rand()
 
 //SLots and Signals
-Enemy::Enemy()
-{ 
+Enemy::Enemy(char size, float before_x, float before_y)
+{
+    type = size;
     //Set truth bool to true.
     ifExist = true;
 
     //Define dimensions
-    width = 150;
-    height = 120;
+    //width = 144;
+    //height = 146;
+
+    if (type == 'B')
+    {
+        width = 144;
+        height = 146;
+        qDebug() << "B made.";
+
+        setPixmap(QPixmap(":/new/files/black_ball.png"));
+    }
+    else if (type == 'M')
+    {
+        width = 100;
+        height = 72;//etc.
+
+        qDebug() << "M made.";
+
+        setPixmap(QPixmap(":/new/files/black_ball_M.png"));
+    }
+    else if (type == 'S')
+    {
+        qDebug() << "S made.";
+
+        width = 60;
+        height = 40;//etc.
+
+        setPixmap(QPixmap(":/new/files/black_ball_S.png"));
+    }
 
     //Random Position
     int random_x = qrand() % 800;
     int random_y = qrand() % 600;
 
+    int ran_Y = qrand() % 10;
+    int ran_X = qrand() % 10;
+
     //Random Angle. Maybe not needed.
     angle = qrand() % 360;
 
     //Insert Image of astroid.
-    setPixmap(QPixmap(":/new/files/astroid_image.png"));
+    //setPixmap(QPixmap(":/new/files/black_ball.png"));
 
     //Set Random position
-    setPos(random_x, random_y);
+    //setPos(random_x, random_y);
 
     //Standard speed
     speed = 1.5;
+    if (size = 'B')
+        speed = 1.5;
+    else if (size = 'M')
+        speed = 2.5;
+    else if (size = 'S')
+        speed = 3.5;
+    else
+        speed = 1.5;
 
     //At a given angle.
     setTransformOriginPoint(width/2, height/2);
@@ -39,6 +81,21 @@ Enemy::Enemy()
     //Key X/Y changes in the velocity.
     speed_y = -speed*cos(qDegreesToRadians(angle));
     speed_x = speed*sin(qDegreesToRadians(angle));
+
+    //Last astroid position.
+    before_X = before_x;
+    before_Y = before_y;
+
+    //Repositions lower sized enemies.
+    if ((type == 'M') || (type == 'S'))
+    {
+        qDebug() << "before_x: " << before_x;
+        qDebug() << "before_y: " << before_y;
+
+        setPos(before_X , before_Y);
+    }
+    else
+        setPos(random_x, random_y);
 }
 
 char Enemy::giveType()
@@ -66,6 +123,11 @@ float Enemy::givePosY()
     return y();
 }
 
+void Enemy::setType(char input)
+{
+    type = input;
+}
+
 void Enemy::updateState()
 {
     speed_y = -speed*cos(qDegreesToRadians(angle));
@@ -78,6 +140,10 @@ void Enemy::move()//Is being called periodcally.
     int pos_x;
     int pos_y = qrand() % 600;
 
+    int reflect_x = qrand() % 10;
+    int reflect_y = qrand() % 10;
+
+
     //qDebug() << "Enemy_X: " << x() << " Enemy_Y: " << y();
     //qDebug() << "Addess??: " << this;
 
@@ -88,19 +154,36 @@ void Enemy::move()//Is being called periodcally.
     //If bullet collides with enemy destroy both.
     for (count = 0, n = colliding_items.size(); count < n ;++count)
     {
-        if (typeid(*(colliding_items[count])) == typeid(Enemy))
+        /*if (typeid(*(colliding_items[count])) == typeid(Enemy))
         {
-            qDebug() << "colliding with Enemy v Enemy";
+            ifExist = false;
 
-            angle += 160;
-            (angle < 0) ? angle += 360 : angle = angle;
-            (angle > 360) ? angle -= 360 : angle = angle;
+            scene()->removeItem(colliding_items[count]);
+            scene()->removeItem(this);
+
+            delete colliding_items[count];
+            delete this;
 
             count = n;
+        }*/
+        if (typeid(*(colliding_items[count])) == typeid(myRect))
+        {
+            ifExist = false;
+
+            scene()->removeItem(this);
+            //delete this;
+        }
+        else if (typeid(*(colliding_items[count])) == typeid(Bullet))
+        {
+            qDebug() << "Hit by Bullet";
+            ifExist = false;
+
+            scene()->removeItem(colliding_items[count]);
+            scene()->removeItem(this);
+
+            delete colliding_items[count];
         }
     }
-
-    updateState();
 
     //Width scene: 800, height scene: 600
     //move the enemy " Random ".

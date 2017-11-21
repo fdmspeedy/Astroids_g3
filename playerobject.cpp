@@ -204,11 +204,9 @@ void myRect::movement()
         if (typeid(*(colliding_items[count])) == typeid(Enemy))
         {
             //Remove both from the scene.
-            scene()->removeItem(colliding_items[count]);
 
-            delete colliding_items[count];
-
-            player_health -= 15;
+            player_health -= 10;
+            qDebug() << "PLAYER HEALTH: " << player_health;
 
             return;
         }

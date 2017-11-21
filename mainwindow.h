@@ -34,7 +34,7 @@ public:
 
     //This controls the game flow. Recontruction Begins here.
     bool gameState(int);
-    void spawnEnemy(int);
+    void spawnEnemy(int, char, float, float);
     void checkListItem();
     ~MainWindow();
 
@@ -50,6 +50,7 @@ public slots:
   void printWhenPressed();
   void spawnBullet();
   void collisionItems();
+  void determineBreakUp();
 
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
@@ -71,6 +72,9 @@ private:
     float enemyPosX;
     float enemyPosY;
 
+    char modeType;
+    float enemy_x;
+    float enemy_y;
 };
 
 #endif // MAINWINDOW_H

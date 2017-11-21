@@ -87,31 +87,23 @@ void Bullet::move()//Is being called periodcally.
         if (typeid(*(colliding_items[count])) == typeid(Enemy))
         {
 
-            //Remove both from the scene.
-            scene()->removeItem(colliding_items[count]);
-            scene()->removeItem(this);
-
-            //qDebug() << "holding?: " << holding;
-            qDebug() << "DATA?: " << & colliding_items[count];
-            qDebug() << "DATA W/ * ?: ";
-
-            qDebug() << "DATA X?: " << colliding_items[count]->x();
-            qDebug() << "DATA y?: " << colliding_items[count]->y();
-            //qDebug() << "Adress??: " << colliding_items[count][0];
-
             enemy_X = colliding_items[count]->x();
             enemy_Y = colliding_items[count]->y();
+
+            //Remove both from the scene.
+            //scene()->removeItem(colliding_items[count]);
+            //scene()->removeItem(this);
 
             qDebug() << "Move(): enemy_X: " << enemy_X;
             qDebug() << "Move(): enemy_Y: " << enemy_Y;
 
-            //Freeing up memory used by deleted objects
-            delete colliding_items[count];
-            delete this;
-
-            //Sets variables to false in order to set up for deletion.
             ifExist = false;
             boogieDown = true;
+
+            //Freeing up memory used by deleted objects
+            //delete this;
+
+            //Sets variables to false in order to set up for deletion.
 
             return;
         }
