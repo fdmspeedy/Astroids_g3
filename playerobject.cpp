@@ -6,7 +6,6 @@
 #include <QKeyEvent>
 #include <QTransform>
 #include <QDebug>
-#include <typeinfo>
 #include <iostream>
 #include <cmath>
 #include <QtMath>
@@ -17,7 +16,8 @@ using namespace std;
 //The Timer is passed in order to create bullet and astroid movement.
 myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
 {
-    player_health = 100.0; //Total starting health.
+    int count;
+    limit = 0;
 
     spacePressed = false;
 
@@ -100,7 +100,7 @@ void myRect::keyPressEvent(QKeyEvent *event)
     {
         if (pos().y() > 0)
         {
-            //qDebug() << "(x, y): " << x() << " / " << y();
+            qDebug() << "(x, y): " << x() << " / " << y();
 
             //It works. Don't Touch it. :)
             move_y = -speed*cos(qDegreesToRadians(angle));
@@ -163,16 +163,6 @@ float myRect::giveSpeedY()
     return speed_y;
 }
 
-int myRect::giveWidth()
-{
-    return width;
-}
-
-int myRect::giveHeight()
-{
-    return height;
-}
-
 /*void myRect::updateLevel(int given_level)
 {
     level = given_level;
@@ -194,44 +184,7 @@ void myRect::createEnemy(int limit)
 
 void myRect::movement()
 {
-    int count, n;
-    QList<QGraphicsItem *> colliding_items = collidingItems();
-
-    //If bullet collides with enemy destroy both.
-    colliding_items = collidingItems();
-    for (count = 0, n = colliding_items.size(); count < n ;++count)
-    {
-        if (typeid(*(colliding_items[count])) == typeid(Enemy))
-        {
-            //Remove both from the scene.
-
-            player_health -= 10;
-            qDebug() << "PLAYER HEALTH: " << player_health;
-
-            return;
-        }
-    }
-
-
     //Player velocity is being moved.setPos()
-    //from: Top. To: Bottom.
-    if (y() < 0)
-        setPos(x() + speed_x, 580-speed_y);
-
-    //from: Bottom. To: Top.
-    else if (y() > 600)
-        setPos(x() + speed_x, 3-speed_y);
-
-    //From: Left side. To: Right Side.
-    else if(x() < 0)
-        setPos(790 + speed_x, y()-speed_y);
-
-    //From: Right side. To: Left side.
-    else if (x() > 800)
-        setPos(3 + speed_x, y()-speed_y);
-
-    //Normal Movement of Ship.
-    else
-        setPos(x()+ speed_x, y()-speed_y);
+    setPos(x()+ speed_x, y()-speed_y);//speed_y
 }
 

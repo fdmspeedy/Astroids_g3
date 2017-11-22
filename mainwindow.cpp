@@ -14,9 +14,6 @@
 #include <QStatusBar>
 #include <QTimer>
 #include <QDebug>
-#include <QtMath>
-#include <typeinfo>
-#include <QList>
 
 #include <QUndoStack>
 #include <QUndoView>
@@ -24,13 +21,15 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QDateTime>
+//#include <QPrinter>
+//#include <QPrintPreviewDialog>
+//#include <QPrintDialog>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QToolBar>
 
-#include <iostream>
-using namespace std;
-
+QList<Enemy*> AstList;
+QList<Bullet*> BullList;
 /*************************************************************************************/
 /*********************** Main application window for QSimulate ***********************/
 /*************************************************************************************/
@@ -74,227 +73,104 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // add status bar message
     statusBar()->showMessage("QSimulate has started");
-
-    modeType = 'B';
-    enemy_x = 0.0;
-    enemy_y = 0.0;
 }
 
-
-//This creates the game (level) when new is pressed.
-//It adds the essentials to the scene
-// and connects important functions to the Timer.
+//Creation and deletion will happen within mainwindows.cpp
 bool MainWindow::gameState(int level)
 {
-    timer = new QTimer();       //Creating a new timer.
+    bool truth;
+
+    timer = new QTimer();
     player = new myRect(timer); //Creating player, and passing a Timer.
 
-    //Add player to the scene.
     m_scene->addItem(player);
-
     //Set player in the middle.
     player->setPos(800 / 2, 600/ 2); //Set player in the middle.
 
-    //Spawns # amount of enemies based (eventually) on level.
-    spawnEnemy(2, modeType, 0, 0);
+    spawnEnemy(3);
 
-    //Connect timer to player movement(), so player can move.
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(movement()));
 
-    //Connect timer to bullet creation, so bullet can move.
+    //QObject::connect(timer, SIGNAL(timeout()), this, SLOT(printWhenPressed()));
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(spawnBullet()));
-
-    //determineBreakUp();
-    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(determineBreakUp()));
-
-    //Start the timer to go of every 30-ish seconds.
-    timer->start(1000/33);
+    //spawnBullet()
+    timer->start(1000/33); //Make an enemy every 2000 milli-seconds
 
     return true;
 }
 
 //Spawns certain enemies. Enemy Creation.
-void MainWindow::spawnEnemy(int limit, char size, float before_x, float before_y)
+void MainWindow::spawnEnemy(int limit)
 {
-    int count; //Loop counter,
-
-    //Creates enemy depending on the limit given.
+    int count;
     for (count = 0; count < limit; count++)
     {
-        qDebug() << "Spawn Enemy Entered Size: " << size;
-
-        Enemy * enemy = new Enemy(size, before_x, before_y);
+        //qDebug() << "Enemy being made...";
+        //qDebug() << "Count: " << count;
+        Enemy * enemy = new Enemy();
         AstList.insert(count, enemy);//Adds enemy to list use subscript value to access later.
-
-        qDebug()<< "Just Added: " << AstList[count]->giveType();
-
-        m_scene->addItem(enemy);     //Adds enemy to the scene.
-
-        //qDebug() << "adress?: " << enemy;
-        cout << "adress?: " << enemy << endl;
-
-        //Connects astroid movement to the Timer.
+        m_scene->addItem(enemy);
         QObject::connect(timer, SIGNAL(timeout()), enemy, SLOT(move()));
     }
     qDebug() << "Within Creating Enemy func.";
 }
 
-void MainWindow::checkListItem()
-{
-    int countA, countB,
-        current_list_len = BullList.size(),
-        sceneCount, sceneItems = m_scene->items().size();
-
-    //QList<QGraphicsPixmapItem *> OnScene = m_scene->items();
-
-    /*for (sceneCount = 0; sceneCount < sceneItems; sceneCount++)
-    {
-        //qDebug() << "reference: " << *OnScene[sceneCount];
-    }*/
-    //for (countA = 0; countA < current_list_len; countA++)
-}
-
 //This creates a bullet.
 void MainWindow::spawnBullet()
 {
-    int count; //List counter.
-
-    //Conveys player's position information to the bullet.
     float angle = player->giveAngle(),
           move_x = player->giveSpeedX(),
           move_y = player->giveSpeedY();
+
     if (player->returnSpacePressed())
     {
-        Bullet * bullet = new Bullet(); //Makes a new Bullet.
+        Bullet * bullet = new Bullet();
+        int count = BullList.size();//Checks size of bullet list
+        count++;//Moves counter to next position
+        BullList.insert(count, bullet);//Adds bullet to list using subscript value to access later.
+        qDebug() << "x(): " << x() << " y(): " << y();
 
-        count = BullList.size();        //Checks size of bullet list
-        count++;                        //Moves counter to next position
-        BullList.insert(count, bullet); //Adds bullet to list using subscript value to access later.
-
-        //qDebug() << "Spawned Bullet Address: " << & bullet;
-        //qDebug() << "BULLIST last: " << BullList.last()->giveExistance();
-        //qDebug() << "x: " << (player->x() + player->giveSpeedX()) << " y: " << (player->y() - player->giveSpeedY());
-
-        //Sets position of bullet, and then updates angle and (stacked) speed.
-        bullet->setPos((player->x() + player->giveWidth()), (player->y()));
+        //Set position of the bullet.
+        bullet->setPos(player->x() + (50/2), player->y()-(66/2));
         bullet->updateBullet(angle, move_x, move_y);
 
-        //Adds created Bullet to the Scene.
+        //qDebug() << "Bullet created";
         m_scene->addItem(bullet);
 
-        //Connects movement of bullet to the Timer.
+        //bullet->updateBullet(angle, speed_x, speed_y);
+
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
-    }
+     }
+
 }
 
-//This determines where the astroid that collided is
-//and then sets it to false and removes it from scene.
+//This would remove both astroid and bullet
+//from the scene, but not delete it.
+//The list is for that.
 void MainWindow::collisionItems()
 {
-    //qDebug() << "Hi";
-    /*int count, list_len = AstList.length();
-    //float enemy_pos_X, enemy_pos_Y;
-
-    //Loop until you find the enemy to be deleted.
-    for (count = 0; count < list_len; count++)
+    /*QList<QGraphicsItem *> colliding_items = collidingItems();
+    for (count = 0, n = colliding_items.size(); count < n ;++count)
     {
-        if (AstList[count]->x() > )
+        if (typeid(*(colliding_items[count])) == typeid(Enemy))
+        {
+            //Remove both*
+            scene()->removeItem(colliding_items[count]);
+            scene()->removeItem();
+
+            //Freeing up memory used by deleted objects
+            delete colliding_items[count];
+            delete this;
+
+            return;
+        }
     }*/
-
-}
-
-void MainWindow::determineBreakUp()
-{
-    int countA, countB, sceneCount;// latest_len = AstList.size();// sceneItems = m_scene->items().size();
-    int AstListLen = AstList.size();
-    float X, Y;
-    char state, type;
-
-    QList<Enemy *> enemyHit;
-    QList<Enemy *> TempList;
-
-
-    //qDebug() << "Start of break-up loop\n";
-
-    //Check for dead enemies. Then sends them to another list.
-    for (countA = 0; countA < AstListLen; countA++)
-    {
-        if ((AstList[countA]->giveState()) == false)
-        {
-            //state = AstList[countA]->giveType();
-
-            enemyHit.append(AstList[countA]);
-
-            qDebug() << "Count-A: " << countA;
-            qDebug() << "AstListLen: " << AstListLen;
-
-            //AstList.removeFirst();
-        }
-        else if ((AstList[countA]->giveState()) == true)
-        {
-            TempList.append(AstList[countA]);
-        }
-    }
-    AstList = TempList;
-    if (enemyHit.size() != 0)
-    {
-        qDebug() << "first item in enemyHit: " << enemyHit[0]->giveState();
-        for (countA = 0; countA < enemyHit.size(); countA++)
-        {
-            qDebug() << "inner countA: " << countA;
-            qDebug() << "enemyHit size: " << enemyHit.size();
-
-            type = enemyHit.value(countA)->giveType();
-            X = enemyHit.value(countA)->givePosX();
-            Y = enemyHit.value(countA)->givePosY();
-
-            qDebug() << "Type: " << type;
-            qDebug() << "X: " << X;
-            qDebug() << "Y: " << Y;
-
-            if (type == 'B')
-            {
-                spawnEnemy(2, 'M', X, Y);
-            }
-            else if (type == 'M')
-            {
-                spawnEnemy(2, 'S', X, Y);
-            }
-            else if (type == 'S')
-                qDebug() << "small one dead";
-
-            delete enemyHit.value(countA);
-        }
-        enemyHit.clear();
-    }
-
-    /*{
-            state = AstList[countA]->giveType();
-
-            qDebug() << "After IF* Colliding Item: " << AstList[countA]->giveState();
-            qDebug() << "List size: " << AstListLen;
-
-            if (state = 'B')
-            {
-                qDebug() << "Hello B to M";
-                spawnEnemy(2, 'M', 0, 0);
-            }
-            else if (state = 'M')
-            {
-                qDebug() << "Hello M to S";
-                //spawnEnemy(2, 'S', AstList[countA]->givePosX(), AstList[countA]->givePosY());
-            }
-            qDebug() << "Count-A: " << countA;
-            AstList.removeAt(countA);
-            qDebug() << "Hello Exiting..";
-        }*/
-    //qDebug() << "End of break-up loop\n";
 }
 
 /*********************************** showMessage ************************************/
 void  MainWindow::showMessage( QString msg )
 {
-    //display message on main window status bar
+  // display message on main window status bar
     statusBar()->showMessage( msg );
 }
 
@@ -449,8 +325,9 @@ void MainWindow::printWhenPressed()
   // draw simulated landscape
   page.adjust( w/20, h/20, -w/20, -h/20 );
   m_scene->render( &painter, page );
-}*/
+}
 
+/************************************** fileNew **************************************/
 
 void  MainWindow::fileNew()
 {
@@ -459,19 +336,16 @@ void  MainWindow::fileNew()
   Scene*          newScene = new Scene( m_undoStack );
   QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
   view->setScene( newScene );
-  delete m_scene;             //Delete old scene.
-  m_scene = newScene;         //Create a new scene.
+  delete m_scene;
+  m_scene = newScene;
 
-  //Sets up the view.
-  view->setAlignment( Qt::AlignLeft | Qt::AlignTop );
-  view->setFrameStyle( 0 );
-  setCentralWidget( view );
   view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->show();
   view->setFixedSize(800, 600);//Set the view to a fixed size.
 
-  current_state = gameState(2);//Creates a new game state.
+
+  current_state = gameState(2);
 }
 
 /************************************ closeEvent *************************************/

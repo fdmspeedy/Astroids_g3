@@ -1,10 +1,3 @@
-/*Team Memebers:
--Freddie Martinez
--Joshua L. Douglas
--Aaron O. Gomez
--Hector Rios
--Eric J. Smrkovsky
--Scott D. Farrow*/
 
 #include <QApplication>
 

@@ -3,9 +3,5 @@
         <file>ship_01.png</file>
         <file>bullet_Purple.png</file>
         <file>Standard_Ship_01.png</file>
-        <file>rock_01.png</file>
-        <file>black_ball.png</file>
-        <file>black_ball_M.png</file>
-        <file>black_ball_S.png</file>
     </qresource>
 </RCC>

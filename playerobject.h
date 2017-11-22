@@ -20,8 +20,6 @@ public:
     float giveAngle();
     float giveSpeedX();
     float giveSpeedY();
-    int giveWidth();
-    int giveHeight();
 
 public slots:
     void movement();
@@ -30,7 +28,9 @@ private:
     QTimer * player_timer;
     bool spacePressed;
 
-    int player_health;
+    int level = 1;
+    int enemy_amount = 2;
+    int limit;
 
     float angle;
 

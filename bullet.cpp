@@ -3,7 +3,6 @@
 #include <QTimer>
 #include <QGraphicsScene>
 #include <QDebug>
-#include <QVariant>
 #include <cmath>
 #include <QtMath>
 #include <QList>
@@ -27,17 +26,14 @@ Bullet::Bullet(): QObject(), QGraphicsPixmapItem()
     setTransformOriginPoint(b_width, b_height);
 }
 
-void Bullet::updateBullet(float angle, float delta_x, float delta_y)
+void Bullet::updateBullet(float angle, float speed_x, float speed_y)
 {
+    //It works don't touch it.            
 
-    //It works. Don't Touch it. :)
-    speed_x = (standard_speed)*sin(qDegreesToRadians(angle));
-    speed_y = -(standard_speed)*cos(qDegreesToRadians(angle));
+    move_x = (standard_speed + speed_x)*sin(qDegreesToRadians(angle));
+    move_y = -(standard_speed + speed_y)*cos(qDegreesToRadians(angle));
 
     setRotation(angle);
-
-    speed_x += delta_x;
-    speed_y -= delta_y;
 }
 
 //Returns current state
@@ -53,74 +49,38 @@ void Bullet::falseExistance()
     ifExist = false;
 }
 
-//Return collided item
-float Bullet::giveEnemyX()
-{
-    return enemy_X;
-}
-
-float Bullet::giveEnemyY()
-{
-    return enemy_Y;
-}
-
-bool Bullet::enemyDown()
-{
-    boogieDown = false;
-    return true;
-}
-
-void Bullet::enemy_list(QList<Enemy *> & aList)
-{
-    qDebug() << "AFAFASFASFASFD";
-    AstList = aList;
-}
-
 //angle, speed, position.
 void Bullet::move()//Is being called periodcally.
 {
     int count, n;
     //If bullet collides with enemy destroy both.
-    colliding_items = collidingItems();
+    /*QList<QGraphicsItem *> colliding_items = collidingItems();
     for (count = 0, n = colliding_items.size(); count < n ;++count)
     {
         if (typeid(*(colliding_items[count])) == typeid(Enemy))
         {
-
-            enemy_X = colliding_items[count]->x();
-            enemy_Y = colliding_items[count]->y();
-
-            //Remove both from the scene.
-            //scene()->removeItem(colliding_items[count]);
-            //scene()->removeItem(this);
-
-            qDebug() << "Move(): enemy_X: " << enemy_X;
-            qDebug() << "Move(): enemy_Y: " << enemy_Y;
-
-            ifExist = false;
-            boogieDown = true;
+            //Remove both*
+            scene()->removeItem(colliding_items[count]);
+            scene()->removeItem(this);
 
             //Freeing up memory used by deleted objects
-            //delete this;
-
-            //Sets variables to false in order to set up for deletion.
+            delete colliding_items[count];
+            delete this;
 
             return;
         }
-    }
+    }*/
 
     //move the bullet " up ".
     //qDebug() << "x(): " << x() << " y(): " << y();
-    //qDebug() << "The constant changes within bullet:";
     //qDebug() << "move_x: " << move_x << " move_y: " << move_y;
 
-    setPos(x() + speed_x, y() + speed_y);
+    setPos(x() + move_x, y() + move_y);
 
     //When the bullet goes beyond the bounds.
     if ((y() < 0) || (y() > 600) || (x() < 0) || (x() > 800))
     {
         scene()->removeItem(this);
-        ifExist = false;
         delete this;
         qDebug() << "Bullet Deleted ...";
     }
