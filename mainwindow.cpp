@@ -80,6 +80,33 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     enemy_y = 0.0;
 }
 
+void  MainWindow::fileNew()
+{
+  bool current_state;
+  m_undoStack->clear();
+  Scene*          newScene = new Scene( m_undoStack );
+  QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
+  view->setScene( newScene );
+  qDebug() << "Before deletion of old scene.";
+
+  delete m_scene;             //Delete old scene.
+  m_scene = newScene;         //Create a new scene.
+
+  //Sets up the view.
+  view->setAlignment( Qt::AlignLeft | Qt::AlignTop );
+  view->setFrameStyle( 0 );
+  setCentralWidget( view );
+  view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  view->show();
+  view->setFixedSize(800, 600);//Set the view to a fixed size.
+  m_scene->setSceneRect(0, 0, 800, 600);
+
+  AstList.clear();
+  BullList.clear();
+
+  current_state = gameState(2);//Creates a new game state.
+}
 
 //This creates the game (level) when new is pressed.
 //It adds the essentials to the scene
@@ -192,6 +219,7 @@ void MainWindow::spawnBullet()
             TempList.append(BullList[count]);
     }
     BullList = TempList; //Update Bullet List.
+
 }
 
 void MainWindow::collisionItems()
@@ -226,20 +254,35 @@ void MainWindow::determineBreakUp()
     //Determine what they are and destroy/create new ones.
     if (enemyHit.size() != 0)
     {
+        qDebug() << "Break 4";
+        qDebug() << "size: " << enemyHit.size();
+
         for (countA = 0; countA < enemyHit.size(); countA++)
         {
+            qDebug() << "Break 5";
+            if (!enemyHit.value(countA))
+                qDebug() << "NULL";
+
+
             type = enemyHit.value(countA)->giveType();
             X = enemyHit.value(countA)->givePosX();
             Y = enemyHit.value(countA)->givePosY();
+
+            qDebug() << "Break 6";
 
             if (type == 'B')
                 spawnEnemy(2, 'M', X, Y);
             else if (type == 'M')
                 spawnEnemy(2, 'S', X, Y);
 
+            qDebug() << "Break 7";
+
             delete enemyHit.value(countA);
+
         }
-        enemyHit.clear();
+        qDebug() << "Break 8";
+
+        //enemyHit.clear();
     }
 }
 
@@ -403,28 +446,6 @@ void MainWindow::printWhenPressed()
   m_scene->render( &painter, page );
 }*/
 
-
-void  MainWindow::fileNew()
-{
-  bool current_state;
-  m_undoStack->clear();
-  Scene*          newScene = new Scene( m_undoStack );
-  QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
-  view->setScene( newScene );
-  delete m_scene;             //Delete old scene.
-  m_scene = newScene;         //Create a new scene.
-
-  //Sets up the view.
-  view->setAlignment( Qt::AlignLeft | Qt::AlignTop );
-  view->setFrameStyle( 0 );
-  setCentralWidget( view );
-  view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  view->show();
-  view->setFixedSize(800, 600);//Set the view to a fixed size.
-
-  current_state = gameState(2);//Creates a new game state.
-}
 
 /************************************ closeEvent *************************************/
 
