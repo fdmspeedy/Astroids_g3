@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include "playerobject.h"
+#include "enemy.h"
+#include "bullet.h"
 
 class Scene;
 class QUndoStack;
@@ -13,6 +15,7 @@ class QPrinter;
 #include <QMainWindow>
 #include <QTimer>
 #include <QList>
+#include <QMediaPlayer>
 
 namespace Ui
 {
@@ -32,9 +35,8 @@ public:
 
     //This controls the game flow. Recontruction Begins here.
     bool gameState(int);
-    void spawnEnemy(int);
-    void collisionItems();
-
+    void spawnEnemy(int, char, float, float);
+    void checkListItem();
     ~MainWindow();
 
 public slots:
@@ -48,7 +50,8 @@ public slots:
   //void print( QPrinter* );            // draw print page
   void printWhenPressed();
   void spawnBullet();
-
+  void collisionItems();
+  void determineBreakUp();
 
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
@@ -58,10 +61,24 @@ private:
     Scene* m_scene;
     QUndoStack * m_undoStack;           // undo stack for undo & redo of commands
     QUndoView * m_undoView;            // undo stack window to view undo & redo commands
+
     bool gameFlow = false;
+
     QTimer * timer;
     myRect * player;
 
+    QList<Enemy*> AstList;
+    QList<Bullet*> BullList;
+
+    float enemyPosX;
+    float enemyPosY;
+
+    char modeType;
+    float enemy_x;
+    float enemy_y;
+
+    QMediaPlayer * bulletSound; //sound for bullet
+    QMediaPlayer * crashSound; //sound for bullet
 };
 
 #endif // MAINWINDOW_H
