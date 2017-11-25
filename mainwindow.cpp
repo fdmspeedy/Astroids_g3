@@ -18,9 +18,6 @@
 #include <typeinfo>
 #include <QList>
 
-#include <QApplication>
-#include <QtGui>
-#include <QPushButton>
 #include <QUndoStack>
 #include <QUndoView>
 #include <QFileDialog>
@@ -30,7 +27,6 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QToolBar>
-#include <QMediaPlayer>
 
 #include <iostream>
 using namespace std;
@@ -82,21 +78,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     modeType = 'B';
     enemy_x = 0.0;
     enemy_y = 0.0;
-
-    //Play background music
-    QMediaPlayer * music = new QMediaPlayer();
-    music->setMedia(QUrl("qrc:/new/files/BACKGROUND.mp3"));
-    music->play();
-
-    //Play sound when bullet is created
-    bulletSound = new QMediaPlayer();
-    bulletSound->setMedia(QUrl("qrc:/new/files/FIRE.mp3"));
-
-    //Play sound when collision is detected
-    crashSound = new QMediaPlayer();
-    crashSound->setMedia(QUrl("qrc:/new/files/HIT.mp3"));
-
-
 }
 
 
@@ -123,7 +104,7 @@ bool MainWindow::gameState(int level)
     //Connect timer to bullet creation, so bullet can move.
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(spawnBullet()));
 
-    //determineBreakUp();
+    //Find when something died, and create new enemies.
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(determineBreakUp()));
 
     //Start the timer to go of every 30-ish seconds.
@@ -182,6 +163,9 @@ void MainWindow::spawnBullet()
     float angle = player->giveAngle(),
           move_x = player->giveSpeedX(),
           move_y = player->giveSpeedY();
+
+    QList <Bullet *> TempList;
+
     if (player->returnSpacePressed())
     {
         Bullet * bullet = new Bullet(); //Makes a new Bullet.
@@ -189,10 +173,6 @@ void MainWindow::spawnBullet()
         count = BullList.size();        //Checks size of bullet list
         count++;                        //Moves counter to next position
         BullList.insert(count, bullet); //Adds bullet to list using subscript value to access later.
-
-        //qDebug() << "Spawned Bullet Address: " << & bullet;
-        //qDebug() << "BULLIST last: " << BullList.last()->giveExistance();
-        //qDebug() << "x: " << (player->x() + player->giveSpeedX()) << " y: " << (player->y() - player->giveSpeedY());
 
         //Sets position of bullet, and then updates angle and (stacked) speed.
         bullet->setPos((player->x() + player->giveWidth()), (player->y()));
@@ -203,154 +183,64 @@ void MainWindow::spawnBullet()
 
         //Connects movement of bullet to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
-
-        //Play sound
-        if(bulletSound->state() == QMediaPlayer::PlayingState)
-        {
-            bulletSound->setPosition(0);
-        }
-        else if(bulletSound->state() == QMediaPlayer::StoppedState)
-        {
-        bulletSound->play();
-        }
     }
+
+    //Updates the Bullet List.
+    for (count = 0; count < BullList.size(); count++)
+    {
+        if (BullList[count]->giveExistance() == true)
+            TempList.append(BullList[count]);
+    }
+    BullList = TempList; //Update Bullet List.
+}
+
+void MainWindow::collisionItems()
+{
+
 }
 
 //This determines where the astroid that collided is
 //and then sets it to false and removes it from scene.
-void MainWindow::collisionItems()
-{
-    //qDebug() << "Hi";
-    /*int count, list_len = AstList.length();
-    //float enemy_pos_X, enemy_pos_Y;
-
-    //Loop until you find the enemy to be deleted.
-    for (count = 0; count < list_len; count++)
-    {
-        if (AstList[count]->x() > )
-    }*/
-
-}
-
 void MainWindow::determineBreakUp()
 {
-    int countA, countB, sceneCount;// latest_len = AstList.size();// sceneItems = m_scene->items().size();
-    int AstListLen = AstList.size();
+    int countA, AstListLen = AstList.size();
     float X, Y;
-    char state, type;
+    char type;
 
     QList<Enemy *> enemyHit;
     QList<Enemy *> TempList;
-
-
-    //qDebug() << "Start of break-up loop\n";
 
     //Check for dead enemies. Then sends them to another list.
     for (countA = 0; countA < AstListLen; countA++)
     {
         if ((AstList[countA]->giveState()) == false)
-        {
-            //state = AstList[countA]->giveType();
-
             enemyHit.append(AstList[countA]);
 
-            qDebug() << "Count-A: " << countA;
-            qDebug() << "AstListLen: " << AstListLen;
-
-            //AstList.removeFirst();
-        }
         else if ((AstList[countA]->giveState()) == true)
-        {
             TempList.append(AstList[countA]);
-        }
     }
-    AstList = TempList;
+
+    AstList = TempList; //Update the AstList.
+
+    //Going through what has just been hit.
+    //Determine what they are and destroy/create new ones.
     if (enemyHit.size() != 0)
     {
-        qDebug() << "first item in enemyHit: " << enemyHit[0]->giveState();
         for (countA = 0; countA < enemyHit.size(); countA++)
         {
-            qDebug() << "inner countA: " << countA;
-            qDebug() << "enemyHit size: " << enemyHit.size();
-
             type = enemyHit.value(countA)->giveType();
             X = enemyHit.value(countA)->givePosX();
             Y = enemyHit.value(countA)->givePosY();
 
-            qDebug() << "Type: " << type;
-            qDebug() << "X: " << X;
-            qDebug() << "Y: " << Y;
-
             if (type == 'B')
-            {
-                //Play sound
-                if(crashSound->state() == QMediaPlayer::PlayingState)
-                {
-                    crashSound->setPosition(0);
-                }
-                else if(crashSound->state() == QMediaPlayer::StoppedState)
-                {
-                crashSound->play();
-                }
-
-                //Spawn 2 mediums
                 spawnEnemy(2, 'M', X, Y);
-            }
             else if (type == 'M')
-            {
-                //Play sound
-                if(crashSound->state() == QMediaPlayer::PlayingState)
-                {
-                    crashSound->setPosition(0);
-                }
-                else if(crashSound->state() == QMediaPlayer::StoppedState)
-                {
-                crashSound->play();
-                }
-
-                //Spawn  smalls
                 spawnEnemy(2, 'S', X, Y);
-            }
-            else if (type == 'S')
-            {
-                //Play sound
-                if(crashSound->state() == QMediaPlayer::PlayingState)
-                {
-                    crashSound->setPosition(0);
-                }
-                else if(crashSound->state() == QMediaPlayer::StoppedState)
-                {
-                crashSound->play();
-                }
-                qDebug() << "small one dead";
-            }
 
             delete enemyHit.value(countA);
         }
         enemyHit.clear();
     }
-
-    /*{
-            state = AstList[countA]->giveType();
-
-            qDebug() << "After IF* Colliding Item: " << AstList[countA]->giveState();
-            qDebug() << "List size: " << AstListLen;
-
-            if (state = 'B')
-            {
-                qDebug() << "Hello B to M";
-                spawnEnemy(2, 'M', 0, 0);
-            }
-            else if (state = 'M')
-            {
-                qDebug() << "Hello M to S";
-                //spawnEnemy(2, 'S', AstList[countA]->givePosX(), AstList[countA]->givePosY());
-            }
-            qDebug() << "Count-A: " << countA;
-            AstList.removeAt(countA);
-            qDebug() << "Hello Exiting..";
-        }*/
-    //qDebug() << "End of break-up loop\n";
 }
 
 /*********************************** showMessage ************************************/
