@@ -51,16 +51,25 @@ Enemy::Enemy(char size, float before_x, float before_y)
     int random_x = qrand() % 800;
     int random_y = qrand() % 600;
 
+    int ran_Y = qrand() % 10;
+    int ran_X = qrand() % 10;
+
     //Random Angle. Maybe not needed.
     angle = qrand() % 360;
 
+    //Insert Image of astroid.
+    //setPixmap(QPixmap(":/new/files/black_ball.png"));
+
+    //Set Random position
+    //setPos(random_x, random_y);
+
     //Standard speed
     speed = 1.5;
-    if (size == 'B')
+    if (size = 'B')
         speed = 1.5;
-    else if (size == 'M')
+    else if (size = 'M')
         speed = 2.5;
-    else if (size == 'S')
+    else if (size = 'S')
         speed = 3.5;
     else
         speed = 1.5;
@@ -131,12 +140,32 @@ void Enemy::move()//Is being called periodcally.
     int pos_x;
     int pos_y = qrand() % 600;
 
+    int reflect_x = qrand() % 10;
+    int reflect_y = qrand() % 10;
+
+
+    //qDebug() << "Enemy_X: " << x() << " Enemy_Y: " << y();
+    //qDebug() << "Addess??: " << this;
+
+
     int count, n;
     QList<QGraphicsItem *> colliding_items = collidingItems();
 
     //If bullet collides with enemy destroy both.
     for (count = 0, n = colliding_items.size(); count < n ;++count)
     {
+        /*if (typeid(*(colliding_items[count])) == typeid(Enemy))
+        {
+            ifExist = false;
+
+            scene()->removeItem(colliding_items[count]);
+            scene()->removeItem(this);
+
+            delete colliding_items[count];
+            delete this;
+
+            count = n;
+        }*/
         if (typeid(*(colliding_items[count])) == typeid(myRect))
         {
             ifExist = false;

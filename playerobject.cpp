@@ -212,6 +212,7 @@ void myRect::movement()
         }
     }
 
+
     //Player velocity is being moved.setPos()
     //from: Top. To: Bottom.
     if (y() < 0)
