@@ -78,7 +78,7 @@ private:
     float enemy_y;
 
     QMediaPlayer * bulletSound; //sound for bullet
-    QMediaPlayer * crashSound; //sound for bullet
+    QMediaPlayer * crashSound; //sound for crash
 };
 
 #endif // MAINWINDOW_H
