@@ -40,14 +40,23 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+     // create file menu options
     QMenu*  fileMenu = menuBar()->addMenu( "&File" );
 
-    // create file menu options
     QAction* newAction     = fileMenu->addAction( "&New", this, SLOT(fileNew()) );
+    newAction->setShortcut( QKeySequence::New );
+
+    fileMenu->addSeparator();
+    QAction* OpenAction     = fileMenu->addAction( "&Open", this, SLOT(fileOpen()) );
+    OpenAction->setShortcut( QKeySequence::Open );
+
+    QAction* SaveAction     = fileMenu->addAction( "&Save", this, SLOT(fileSaveAs()) );
+    SaveAction->setShortcut( QKeySequence::SaveAs );
 
     fileMenu->addSeparator();
     fileMenu->addAction( "&Quit", this, SLOT(close()) );
-    newAction->setShortcut( QKeySequence::New );
+    newAction->setShortcut( QKeySequence::Quit );
 
     // create undo stack and associated menu actions
     m_undoStack = new QUndoStack( this );
@@ -67,8 +76,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->show();
-    view->setFixedSize(800, 600);//Set the view to a fixed size.
-    m_scene->setSceneRect(0, 0, 800, 600);
+    //Freddie Trying to get full screen
+       view->setFixedSize(800, 600);//Set the view to a fixed size.
+    //m_scene->setSceneRect(0, 0, 800, 600);
 
     // connect message signal from scene to showMessage slot
     connect( m_scene, SIGNAL(message(QString)), this, SLOT(showMessage(QString)) );
@@ -115,8 +125,9 @@ void  MainWindow::fileNew()
   view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->show();
-  view->setFixedSize(800, 600);//Set the view to a fixed size.
-  m_scene->setSceneRect(0, 0, 800, 600);
+  //Freddie Trying to get full screen
+  //view->setFixedSize(800, 600);//Set the view to a fixed size.
+  //m_scene->setSceneRect(0, 0, 800, 600);
 
   AstList.clear();
   BullList.clear();
@@ -186,17 +197,19 @@ void MainWindow::spawnEnemy(int limit, char size, float before_x, float before_y
 
 void MainWindow::checkListItem()
 {
-    int countA, countB,
+    /* stuff that wasn't used
+     * int countA, countB,
         current_list_len = BullList.size(),
         sceneCount, sceneItems = m_scene->items().size();
 
-    //QList<QGraphicsPixmapItem *> OnScene = m_scene->items();
+    QList<QGraphicsPixmapItem *> OnScene = m_scene->items();
 
-    /*for (sceneCount = 0; sceneCount < sceneItems; sceneCount++)
+    for (sceneCount = 0; sceneCount < sceneItems; sceneCount++)
     {
-        //qDebug() << "reference: " << *OnScene[sceneCount];
-    }*/
-    //for (countA = 0; countA < current_list_len; countA++)
+        qDebug() << "reference: " << *OnScene[sceneCount];
+    }
+    for (countA = 0; countA < current_list_len; countA++)
+    */
 }
 
 //This creates a bullet.
@@ -438,53 +451,6 @@ void MainWindow::printWhenPressed()
         qDebug() << "Hello.";
     }
 }
-
-/********************************* filePrintPreview **********************************/
-
-/*void  MainWindow::filePrintPreview()
-{
-  // display print preview dialog
-  QPrinter             printer( QPrinter::ScreenResolution ); // QPrinter::HighResolution );
-  QPrintPreviewDialog  preview( &printer, this );
-  connect( &preview, SIGNAL(paintRequested(QPrinter*)), SLOT(print(QPrinter*)) );
-  preview.exec();
-}
-
-/************************************ filePrint **************************************/
-
-/*void  MainWindow::filePrint()
-{
-  // display print dialog and if accepted print
-  QPrinter       printer( QPrinter::ScreenResolution );
-  QPrintDialog   dialog( &printer, this );
-  if ( dialog.exec() == QDialog::Accepted ) print( &printer );
-}
-
-/*************************************** print ***************************************/
-
-/*void  MainWindow::print( QPrinter* printer )
-{
-  // create painter for drawing print page
-  QPainter painter( printer );
-  int      w = printer->pageRect().width();
-  int      h = printer->pageRect().height();
-  QRect    page( 0, 0, w, h );
-
-  // create a font appropriate to page size
-  QFont    font = painter.font();
-  font.setPixelSize( (w+h) / 100 );
-  painter.setFont( font );
-
-  // draw labels in corners of page
-  painter.drawText( page, Qt::AlignTop    | Qt::AlignLeft, "QSimulate" );
-  painter.drawText( page, Qt::AlignBottom | Qt::AlignLeft, QString(getenv("USERNAME")) );
-  painter.drawText( page, Qt::AlignBottom | Qt::AlignRight,
-                    QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
-
-  // draw simulated landscape
-  page.adjust( w/20, h/20, -w/20, -h/20 );
-  m_scene->render( &painter, page );
-}*/
 
 
 /************************************ closeEvent *************************************/
