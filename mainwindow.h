@@ -15,7 +15,6 @@ class QPrinter;
 #include <QMainWindow>
 #include <QTimer>
 #include <QList>
-#include <QMediaPlayer>
 
 namespace Ui
 {
@@ -52,6 +51,7 @@ public slots:
   void spawnBullet();
   void collisionItems();
   void determineBreakUp();
+  void isLevelDone();
 
 protected:
   void closeEvent( QCloseEvent* );    // check if user really wants to exit
@@ -62,7 +62,9 @@ private:
     QUndoStack * m_undoStack;           // undo stack for undo & redo of commands
     QUndoView * m_undoView;            // undo stack window to view undo & redo commands
 
-    bool gameFlow = false;
+    int level_count;         //For the creation of enemies for certain levels.
+    int current_level_count; //Saves the current level's count.
+    bool gamechange;         //To determine if new level needed.
 
     QTimer * timer;
     myRect * player;
@@ -76,9 +78,6 @@ private:
     char modeType;
     float enemy_x;
     float enemy_y;
-
-    QMediaPlayer * bulletSound; //sound for bullet
-    QMediaPlayer * crashSound; //sound for crash
 };
 
 #endif // MAINWINDOW_H

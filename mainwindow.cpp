@@ -27,7 +27,6 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QToolBar>
-#include <QMediaPlayer>
 
 #include <iostream>
 using namespace std;
@@ -40,23 +39,14 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-     // create file menu options
     QMenu*  fileMenu = menuBar()->addMenu( "&File" );
 
+    // create file menu options
     QAction* newAction     = fileMenu->addAction( "&New", this, SLOT(fileNew()) );
-    newAction->setShortcut( QKeySequence::New );
-
-    fileMenu->addSeparator();
-    QAction* OpenAction     = fileMenu->addAction( "&Open", this, SLOT(fileOpen()) );
-    OpenAction->setShortcut( QKeySequence::Open );
-
-    QAction* SaveAction     = fileMenu->addAction( "&Save", this, SLOT(fileSaveAs()) );
-    SaveAction->setShortcut( QKeySequence::SaveAs );
 
     fileMenu->addSeparator();
     fileMenu->addAction( "&Quit", this, SLOT(close()) );
-    newAction->setShortcut( QKeySequence::Quit );
+    newAction->setShortcut( QKeySequence::New );
 
     // create undo stack and associated menu actions
     m_undoStack = new QUndoStack( this );
@@ -76,9 +66,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->show();
-    //Freddie Trying to get full screen
-       view->setFixedSize(800, 600);//Set the view to a fixed size.
-    //m_scene->setSceneRect(0, 0, 800, 600);
+    view->setFixedSize(800, 600);//Set the view to a fixed size.
+    m_scene->setSceneRect(0, 0, 800, 600);
 
     // connect message signal from scene to showMessage slot
     connect( m_scene, SIGNAL(message(QString)), this, SLOT(showMessage(QString)) );
@@ -90,25 +79,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     enemy_x = 0.0;
     enemy_y = 0.0;
 
-
-    //Play background music
-    QMediaPlayer * music = new QMediaPlayer();
-    music->setMedia(QUrl("qrc:/new/files/BACKGROUND.mp3"));
-    music->play();
-
-    //Play sound when bullet is created
-    bulletSound = new QMediaPlayer();
-    bulletSound->setMedia(QUrl("qrc:/new/files/FIRE.mp3"));
-
-    //Play sound when collision is detected
-    crashSound = new QMediaPlayer();
-    crashSound->setMedia(QUrl("qrc:/new/files/HIT.mp3"));
-
+    level_count = 2;     // Amount of asteriods in starting level.
+    gamechange = false;  //No new game at this point.
 }
 
 void  MainWindow::fileNew()
 {
   bool current_state;
+
+  //Saves the current level count variable for the enemies in this 'level'.
+  current_level_count = level_count;
+
   m_undoStack->clear();
   Scene*          newScene = new Scene( m_undoStack );
   QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
@@ -125,14 +106,19 @@ void  MainWindow::fileNew()
   view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   view->show();
-  //Freddie Trying to get full screen
-  //view->setFixedSize(800, 600);//Set the view to a fixed size.
-  //m_scene->setSceneRect(0, 0, 800, 600);
+  view->setFixedSize(800, 600);//Set the view to a fixed size.
+  m_scene->setSceneRect(0, 0, 800, 600);
 
   AstList.clear();
   BullList.clear();
 
-  current_state = gameState(2);//Creates a new game state.
+  if (gamechange)
+  {
+      current_state = gameState(level_count);//Creates a new game state.
+      gamechange = false;
+  }
+  else
+      current_state = gameState(current_level_count);//Creates a new game state.
 }
 
 //This creates the game (level) when new is pressed.
@@ -150,7 +136,7 @@ bool MainWindow::gameState(int level)
     player->setPos(800 / 2, 600/ 2); //Set player in the middle.
 
     //Spawns # amount of enemies based (eventually) on level.
-    spawnEnemy(2, modeType, 0, 0);
+    spawnEnemy(level, modeType, 0, 0);
 
     //Connect timer to player movement(), so player can move.
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(movement()));
@@ -160,6 +146,9 @@ bool MainWindow::gameState(int level)
 
     //Find when something died, and create new enemies.
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(determineBreakUp()));
+
+    //Determines when to start a new level.
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(isLevelDone()));
 
     //Start the timer to go of every 30-ish seconds.
     timer->start(1000/33);
@@ -189,27 +178,23 @@ void MainWindow::spawnEnemy(int limit, char size, float before_x, float before_y
 
         //Connects astroid movement to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), enemy, SLOT(move()));
-
-
     }
     qDebug() << "Within Creating Enemy func.";
 }
 
 void MainWindow::checkListItem()
 {
-    /* stuff that wasn't used
-     * int countA, countB,
+    int countA, countB,
         current_list_len = BullList.size(),
         sceneCount, sceneItems = m_scene->items().size();
 
-    QList<QGraphicsPixmapItem *> OnScene = m_scene->items();
+    //QList<QGraphicsPixmapItem *> OnScene = m_scene->items();
 
-    for (sceneCount = 0; sceneCount < sceneItems; sceneCount++)
+    /*for (sceneCount = 0; sceneCount < sceneItems; sceneCount++)
     {
-        qDebug() << "reference: " << *OnScene[sceneCount];
-    }
-    for (countA = 0; countA < current_list_len; countA++)
-    */
+        //qDebug() << "reference: " << *OnScene[sceneCount];
+    }*/
+    //for (countA = 0; countA < current_list_len; countA++)
 }
 
 //This creates a bullet.
@@ -220,7 +205,7 @@ void MainWindow::spawnBullet()
     //Conveys player's position information to the bullet.
     float angle = player->giveAngle(),
           move_x = player->giveSpeedX(),
-          move_y = player->giveSpeedY();
+          move_y = player->giveSpeedY();;
 
     QList <Bullet *> TempList;
 
@@ -233,26 +218,19 @@ void MainWindow::spawnBullet()
         BullList.insert(count, bullet); //Adds bullet to list using subscript value to access later.
 
         //Sets position of bullet, and then updates angle and (stacked) speed.
-        bullet->setPos((player->x() + player->giveWidth()), (player->y()));
-        bullet->updateBullet(angle, move_x, move_y);
+        //bullet->setPos((player->x() + player->giveWidth()), (player->y()));
+        qDebug() << "player Y: " << player->y();
+        qDebug() << "player height: " << player->giveHeight();
 
+        bullet->setPos((player->x() + player->giveWidth()), (player->y()));// + player->giveHeight()));
+
+        bullet->updateBullet(angle, move_x, move_y);
 
         //Adds created Bullet to the Scene.
         m_scene->addItem(bullet);
 
         //Connects movement of bullet to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
-
-        //Play sound
-        if(bulletSound->state() == QMediaPlayer::PlayingState)
-        {
-            bulletSound->setPosition(0);
-        }
-        else if(bulletSound->state() == QMediaPlayer::StoppedState)
-        {
-        bulletSound->play();
-        }
-
     }
 
     //Updates the Bullet List.
@@ -293,28 +271,16 @@ void MainWindow::determineBreakUp()
 
     AstList = TempList; //Update the AstList.
 
-
     //Going through what has just been hit.
     //Determine what they are and destroy/create new ones.
     if (enemyHit.size() != 0)
     {
         qDebug() << "Break 4";
         qDebug() << "size: " << enemyHit.size();
-        //Play sound
-        if(crashSound->state() == QMediaPlayer::PlayingState)
-        {
-            crashSound->setPosition(0);
-        }
-        else if(crashSound->state() == QMediaPlayer::StoppedState)
-        {
-        crashSound->play();
-        }
+
         for (countA = 0; countA < enemyHit.size(); countA++)
         {
             qDebug() << "Break 5";
-            if (!enemyHit.value(countA))
-                qDebug() << "NULL";
-
 
             type = enemyHit.value(countA)->giveType();
             X = enemyHit.value(countA)->givePosX();
@@ -327,15 +293,34 @@ void MainWindow::determineBreakUp()
             else if (type == 'M')
                 spawnEnemy(2, 'S', X, Y);
 
-
             qDebug() << "Break 7";
 
             delete enemyHit.value(countA);
-
         }
         qDebug() << "Break 8";
 
         //enemyHit.clear();
+    }
+}
+
+//Checks when there are no Enemies and starts the new level.
+//When 'limit' reached; it stops the increase in hardness.
+void MainWindow::isLevelDone()
+{
+    //if all asteroids gone, start a new level.
+    if (AstList.size() == 0)
+    {
+        level_count++;      //Increment the amount of enemies in next level.
+        gamechange = true;  //New gamestate needed.
+
+        if (level_count == 5)
+        {
+            //Levels done = end game.
+            qDebug() << "Limit reached - End Game."
+        }
+        else
+            fileNew();      //Start another game state
+
     }
 }
 
@@ -451,6 +436,53 @@ void MainWindow::printWhenPressed()
         qDebug() << "Hello.";
     }
 }
+
+/********************************* filePrintPreview **********************************/
+
+/*void  MainWindow::filePrintPreview()
+{
+  // display print preview dialog
+  QPrinter             printer( QPrinter::ScreenResolution ); // QPrinter::HighResolution );
+  QPrintPreviewDialog  preview( &printer, this );
+  connect( &preview, SIGNAL(paintRequested(QPrinter*)), SLOT(print(QPrinter*)) );
+  preview.exec();
+}
+
+/************************************ filePrint **************************************/
+
+/*void  MainWindow::filePrint()
+{
+  // display print dialog and if accepted print
+  QPrinter       printer( QPrinter::ScreenResolution );
+  QPrintDialog   dialog( &printer, this );
+  if ( dialog.exec() == QDialog::Accepted ) print( &printer );
+}
+
+/*************************************** print ***************************************/
+
+/*void  MainWindow::print( QPrinter* printer )
+{
+  // create painter for drawing print page
+  QPainter painter( printer );
+  int      w = printer->pageRect().width();
+  int      h = printer->pageRect().height();
+  QRect    page( 0, 0, w, h );
+
+  // create a font appropriate to page size
+  QFont    font = painter.font();
+  font.setPixelSize( (w+h) / 100 );
+  painter.setFont( font );
+
+  // draw labels in corners of page
+  painter.drawText( page, Qt::AlignTop    | Qt::AlignLeft, "QSimulate" );
+  painter.drawText( page, Qt::AlignBottom | Qt::AlignLeft, QString(getenv("USERNAME")) );
+  painter.drawText( page, Qt::AlignBottom | Qt::AlignRight,
+                    QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
+
+  // draw simulated landscape
+  page.adjust( w/20, h/20, -w/20, -h/20 );
+  m_scene->render( &painter, page );
+}*/
 
 
 /************************************ closeEvent *************************************/
