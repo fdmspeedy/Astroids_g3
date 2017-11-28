@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <typeinfo>
 #include <stdlib.h> //rand()
+#include <QMediaPlayer>
 
 //SLots and Signals
 Enemy::Enemy(char size, float before_x, float before_y)
@@ -87,6 +88,10 @@ Enemy::Enemy(char size, float before_x, float before_y)
     }
     else
         setPos(random_x, random_y);
+    //Play sound when bullet is created
+    damageSound = new QMediaPlayer();
+    damageSound->setMedia(QUrl("qrc:/new/files/OUCH.wav"));
+
 }
 
 char Enemy::giveType()
@@ -142,6 +147,7 @@ void Enemy::move()//Is being called periodcally.
             ifExist = false;
 
             scene()->removeItem(this);
+
             //delete this;
         }
         else if (typeid(*(colliding_items[count])) == typeid(Bullet))

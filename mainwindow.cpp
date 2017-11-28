@@ -28,6 +28,8 @@
 #include <QMessageBox>
 #include <QToolBar>
 
+#include <QMediaPlayer>
+
 #include <iostream>
 using namespace std;
 
@@ -81,6 +83,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     level_count = 2;     // Amount of asteriods in starting level.
     gamechange = false;  //No new game at this point.
+
+    //Play background music
+    QMediaPlayer * music = new QMediaPlayer();
+    music->setMedia(QUrl("qrc:/new/files/BACKGROUND.mp3"));
+    music->play();
+
+    //Play sound when bullet is created
+    bulletSound = new QMediaPlayer();
+    bulletSound->setMedia(QUrl("qrc:/new/files/FIRE.mp3"));
+
+    //Play sound when collision is detected
+    crashSound = new QMediaPlayer();
+    crashSound->setMedia(QUrl("qrc:/new/files/HIT.mp3"));
+
+    //Play sound when starting new level
+    levelSound = new QMediaPlayer();
+    levelSound->setMedia(QUrl("qrc:/new/files/NEXTLEVEL.wav"));
 }
 
 void  MainWindow::fileNew()
@@ -213,6 +232,16 @@ void MainWindow::spawnBullet()
     {
         Bullet * bullet = new Bullet(); //Makes a new Bullet.
 
+        //Play sound
+        if(bulletSound->state() == QMediaPlayer::PlayingState)
+        {
+            bulletSound->setPosition(0);
+        }
+        else if(bulletSound->state() == QMediaPlayer::StoppedState)
+        {
+        bulletSound->play();
+        }
+
         count = BullList.size();        //Checks size of bullet list
         count++;                        //Moves counter to next position
         BullList.insert(count, bullet); //Adds bullet to list using subscript value to access later.
@@ -231,6 +260,8 @@ void MainWindow::spawnBullet()
 
         //Connects movement of bullet to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
+
+
     }
 
     //Updates the Bullet List.
@@ -275,11 +306,14 @@ void MainWindow::determineBreakUp()
     //Determine what they are and destroy/create new ones.
     if (enemyHit.size() != 0)
     {
+
+
         qDebug() << "Break 4";
         qDebug() << "size: " << enemyHit.size();
 
         for (countA = 0; countA < enemyHit.size(); countA++)
         {
+
             qDebug() << "Break 5";
 
             type = enemyHit.value(countA)->giveType();
@@ -287,6 +321,16 @@ void MainWindow::determineBreakUp()
             Y = enemyHit.value(countA)->givePosY();
 
             qDebug() << "Break 6";
+
+            //Play sound
+            if(crashSound->state() == QMediaPlayer::PlayingState)
+            {
+                crashSound->setPosition(0);
+            }
+            else if(crashSound->state() == QMediaPlayer::StoppedState)
+            {
+            crashSound->play();
+            }
 
             if (type == 'B')
                 spawnEnemy(2, 'M', X, Y);
@@ -296,6 +340,7 @@ void MainWindow::determineBreakUp()
             qDebug() << "Break 7";
 
             delete enemyHit.value(countA);
+
         }
         qDebug() << "Break 8";
 
@@ -313,14 +358,28 @@ void MainWindow::isLevelDone()
         level_count++;      //Increment the amount of enemies in next level.
         gamechange = true;  //New gamestate needed.
 
+        if(level_count < 5)
+        {
+           //Play sound
+           if(levelSound->state() == QMediaPlayer::PlayingState)
+           {
+               levelSound->setPosition(0);
+           }
+           else if(levelSound->state() == QMediaPlayer::StoppedState)
+           {
+           levelSound->play();
+           }
+        }
         if (level_count == 5)
         {
             //Levels done = end game.
-            qDebug() << "Limit reached - End Game."
+            qDebug() << "Limit reached - End Game.";
         }
         else
+        {
             fileNew();      //Start another game state
 
+        }
     }
 }
 

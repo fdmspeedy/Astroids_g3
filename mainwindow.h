@@ -15,6 +15,8 @@ class QPrinter;
 #include <QMainWindow>
 #include <QTimer>
 #include <QList>
+#include <QMediaPlayer>
+
 
 namespace Ui
 {
@@ -78,6 +80,10 @@ private:
     char modeType;
     float enemy_x;
     float enemy_y;
+
+    QMediaPlayer * bulletSound; //sound for bullet
+    QMediaPlayer * crashSound; //sound for crash
+    QMediaPlayer * levelSound; //sound for new levels
 };
 
 #endif // MAINWINDOW_H

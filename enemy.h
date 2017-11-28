@@ -4,6 +4,8 @@
 #include <QGraphicsRectItem>
 #include <QObject>
 
+#include <QMediaPlayer>
+
 class Enemy : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
@@ -38,6 +40,8 @@ private:
     float before_X;
     float before_Y;
 
+
+    QMediaPlayer * damageSound; //sound for new levels
 };
 
 
