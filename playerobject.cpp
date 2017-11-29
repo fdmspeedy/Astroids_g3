@@ -20,7 +20,7 @@ myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
     player_health = 100.0; //Total starting health.
 
     spacePressed = false;
-    bulletCooldown = 0;   //COntrol of bullet pressing.
+    bulletCooldown = 0;   //Control of bullet pressing.
 
     player_timer = timer;
 
@@ -175,24 +175,23 @@ int myRect::giveHealth()
     return player_health;
 }
 
-/*void myRect::updateLevel(int given_level)
+//new
+//Note: changed width and height to be floats, and added three functions,
+//and private varible.
+void myRect::setTipShip()
 {
-    level = given_level;
+    shipFrontY = -(height)*cos(qDegreesToRadians(angle));
+    shipFrontX = (width)*sin(qDegreesToRadians(angle));
+}
+float myRect::giveTipY()
+{
+    return (y() + shipFrontY);
 }
 
-void myRect::createEnemy(int limit)
+float myRect::giveTipX()
 {
-    int count;
-    for (count = 0; count < limit; count++)
-    {
-        //qDebug() << "Enemy being made...";
-        //qDebug() << "Count: " << count;
-        Enemy * enemy = new Enemy();
-        scene()->addItem(enemy);
-        QObject::connect(player_timer, SIGNAL(timeout()), enemy, SLOT(move()));
-    }
-    qDebug() << "Within Creating Enemy func.";
-}*/
+    return (x()+(width)+shipFrontX);
+}
 
 void myRect::movement()
 {
@@ -205,8 +204,6 @@ void myRect::movement()
     {
         if (typeid(*(colliding_items[count])) == typeid(Enemy))
         {
-            //Remove both from the scene.
-
             player_health -= 10;
             qDebug() << "PLAYER HEALTH: " << player_health;
 

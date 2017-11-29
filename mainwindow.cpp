@@ -126,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     level_count = 2;     // Amount of asteriods in starting level.
     gamechange = false;  //No new game at this point.
+    current_level_count = 2;
 
     //Play background music
     QMediaPlayer * music = new QMediaPlayer();
@@ -150,7 +151,6 @@ void  MainWindow::fileNew()
   bool current_state;
 
   //Saves the current level count variable for the enemies in this 'level'.
-  current_level_count = level_count;
 
   m_undoStack->clear();
   Scene*          newScene = new Scene( m_undoStack );
@@ -174,13 +174,16 @@ void  MainWindow::fileNew()
   AstList.clear();
   BullList.clear();
 
-  if (gamechange)
+  if (gamechange && (level_count < 6))
   {
       current_state = gameState(level_count);//Creates a new game state.
       gamechange = false;
   }
-  else
+  else //If player presses new, it returns him to level 1.
+  {
+      level_count = 2; //Returns to first level if new pressed.
       current_state = gameState(current_level_count);//Creates a new game state.
+  }
 }
 
 //This creates the game (level) when new is pressed.
@@ -282,7 +285,7 @@ void MainWindow::spawnBullet()
         }
         else if(bulletSound->state() == QMediaPlayer::StoppedState)
         {
-        bulletSound->play();
+            bulletSound->play();
         }
 
         count = BullList.size();        //Checks size of bullet list
@@ -291,11 +294,10 @@ void MainWindow::spawnBullet()
 
         //Sets position of bullet, and then updates angle and (stacked) speed.
         //bullet->setPos((player->x() + player->giveWidth()), (player->y()));
-        qDebug() << "player Y: " << player->y();
-        qDebug() << "player height: " << player->giveHeight();
+        //Bases position off of the player.
+        player->setTipShip();
 
-        bullet->setPos((player->x() + player->giveWidth()), (player->y()));// + player->giveHeight()));
-
+        bullet->setPos(player->giveTipX(), player->giveTipY());
         bullet->updateBullet(angle, move_x, move_y);
 
         //Adds created Bullet to the Scene.
@@ -303,8 +305,6 @@ void MainWindow::spawnBullet()
 
         //Connects movement of bullet to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), bullet, SLOT(move()));
-
-
     }
 
     //Updates the Bullet List.
@@ -349,11 +349,6 @@ void MainWindow::determineBreakUp()
     //Determine what they are and destroy/create new ones.
     if (enemyHit.size() != 0)
     {
-
-
-        qDebug() << "Break 4";
-        qDebug() << "size: " << enemyHit.size();
-
         for (countA = 0; countA < enemyHit.size(); countA++)
         {
 
@@ -372,7 +367,7 @@ void MainWindow::determineBreakUp()
             }
             else if(crashSound->state() == QMediaPlayer::StoppedState)
             {
-            crashSound->play();
+                crashSound->play();
             }
 
             if (type == 'B')
@@ -386,8 +381,6 @@ void MainWindow::determineBreakUp()
 
         }
         qDebug() << "Break 8";
-
-        //enemyHit.clear();
     }
 }
 
@@ -401,7 +394,7 @@ void MainWindow::isLevelDone()
         level_count++;      //Increment the amount of enemies in next level.
         gamechange = true;  //New gamestate needed.
 
-        if(level_count < 5)
+        if(level_count < 6)
         {
            //Play sound
            if(levelSound->state() == QMediaPlayer::PlayingState)
@@ -410,10 +403,10 @@ void MainWindow::isLevelDone()
            }
            else if(levelSound->state() == QMediaPlayer::StoppedState)
            {
-           levelSound->play();
+               levelSound->play();
            }
         }
-        if (level_count == 5)
+        if (level_count == 6)
         {
             //Levels done = end game.
             qDebug() << "Limit reached - End Game.";

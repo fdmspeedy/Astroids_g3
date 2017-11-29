@@ -24,6 +24,10 @@ public:
     int giveHeight();
     int giveHealth();
 
+    void setTipShip(); //new
+    float giveTipY();
+    float giveTipX();
+
 public slots:
     void movement();
 
@@ -34,7 +38,6 @@ private:
     int player_health;
     int bulletCooldown;
 
-
     float angle;
 
     int width;
@@ -43,6 +46,10 @@ private:
     float speed;
     float speed_x;
     float speed_y;
+
+    //new
+    float shipFrontX;
+    float shipFrontY;
 
 };
 
