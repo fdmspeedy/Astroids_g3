@@ -59,6 +59,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QAction* QuitAction     = fileMenu->addAction( "&Quit", this, SLOT(close()) );
     QuitAction->setShortcut( QKeySequence::Quit );
 
+    QMenu*  setMenu = menuBar()->addMenu( "&Settings" );
+
+    QAction* PrefAction     = setMenu->addAction( "&Preferences", this, SLOT() );
+
+    QMenu*  helpMenu = menuBar()->addMenu( "&Help" );
+
+    QAction* helpAction     = helpMenu->addAction( "&Help", this, SLOT() );
+    helpAction->setShortcut( QKeySequence::HelpContents );
+
+    helpMenu->addSeparator();
+    QAction* aboutAction     = helpMenu->addAction( "&About", this, SLOT() );
+
 
 
     // create undo stack and associated menu actions

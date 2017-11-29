@@ -51,9 +51,6 @@ public slots:
   void fileNew();                     // start new simulation
   bool fileSaveAs();                  // save simulation to file returning true if successful
   bool fileOpen();                    // load simulation file returning true if successful
-  //void filePrintPreview();            // display print preview dialog
-  //void filePrint();                   // display print dialog
-  //void print( QPrinter* );            // draw print page
   void printWhenPressed();
   void spawnBullet();
   void collisionItems();

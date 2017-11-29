@@ -50,8 +50,8 @@ Scene::Scene( QUndoStack* undoStack ) : QGraphicsScene()
 }
 */
 /************************************ writeStream ************************************/
-
-/*void  Scene::writeStream( QXmlStreamWriter* stream )
+/*
+void  Scene::writeStream( QXmlStreamWriter* stream )
 {
   // write station data to xml stream
   foreach( QGraphicsItem*  item, items() )
@@ -65,7 +65,7 @@ Scene::Scene( QUndoStack* undoStack ) : QGraphicsScene()
     }
   }
 }
-
+*/
 /************************************ readStream *************************************/
 
 /*void  Scene::readStream( QXmlStreamReader* stream )
@@ -86,7 +86,7 @@ Scene::Scene( QUndoStack* undoStack ) : QGraphicsScene()
     }
   }
 }
-
+*/
 /********************************** mousePressEvent **********************************/
 
 /*void  Scene::mousePressEvent( QGraphicsSceneMouseEvent* event )
