@@ -1,12 +1,6 @@
 <RCC>
     <qresource prefix="/new/files">
-        <file>ship_01.png</file>
-        <file>bullet_Purple.png</file>
         <file>Standard_Ship_01.png</file>
-        <file>rock_01.png</file>
-        <file>xblack_ball.png</file>
-        <file>xblack_ball_M.png</file>
-        <file>xblack_ball_S.png</file>
         <file>BACKGROUND.mp3</file>
         <file>FIRE.mp3</file>
         <file>HIT.mp3</file>
@@ -18,5 +12,8 @@
         <file>black_ball_S.png</file>
         <file>Galaxy-illustration.jpg</file>
         <file>Help.PNG</file>
+        <file>bullet_Purple.png</file>
+        <file>NEXTLEVEL.wav</file>
+        <file>OUCH.wav</file>
     </qresource>
 </RCC>

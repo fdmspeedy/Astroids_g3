@@ -88,16 +88,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // add status bar message
     statusBar()->showMessage("QSimulate has started");
 
+    //
     frame = new QFrame(view);
     frame->setObjectName(QStringLiteral("frame"));
-    frame->setGeometry(QRect(0, 410, 781, 51));
+    frame->setGeometry(QRect(0, 550, 800, 50));
     frame->setFrameShape(QFrame::StyledPanel);
     frame->setFrameShadow(QFrame::Raised);
     progressBar = new QProgressBar(frame);
     progressBar->setObjectName(QStringLiteral("progressBar"));
-    progressBar->setGeometry(QRect(350, 10, 118, 41));
-    progressBar->setValue(healthProg);
-
+    progressBar->setGeometry(QRect(350, 5, 118, 20));
+    progressBar->setValue(100);
 
     //connect(healthProg, SIGNAL(valuechanged(int))
     //        , progressBar, SLOT(setValue(int)));
@@ -176,9 +176,6 @@ bool MainWindow::gameState(int level)
 {
     timer = new QTimer();       //Creating a new timer.
     player = new myRect(timer); //Creating player, and passing a Timer.
-
-    int healthProg = player->giveHealth(); //set healthprog
-    qDebug() << "HealthProg: " << healthProg;
 
     //Add player to the scene.
     m_scene->addItem(player);
