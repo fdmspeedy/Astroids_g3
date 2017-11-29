@@ -16,6 +16,8 @@ class QPrinter;
 #include <QTimer>
 #include <QList>
 #include <QMediaPlayer>
+#include <QtWidgets/QProgressBar>
+#include <QtWidgets/QFrame>
 
 
 namespace Ui
@@ -32,6 +34,9 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
+    QFrame *frame;
+    QProgressBar *progressBar;
+    int healthProg;
     explicit MainWindow(QWidget *parent = 0);
 
     //This controls the game flow. Recontruction Begins here.

@@ -164,6 +164,11 @@ int myRect::giveHeight()
     return height;
 }
 
+int myRect::giveHealth()
+{
+    return player_health;
+}
+
 /*void myRect::updateLevel(int given_level)
 {
     level = given_level;

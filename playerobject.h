@@ -22,6 +22,7 @@ public:
     float giveSpeedY();
     int giveWidth();
     int giveHeight();
+    int giveHealth();
 
 public slots:
     void movement();

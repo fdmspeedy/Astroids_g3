@@ -44,11 +44,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QMenu*  fileMenu = menuBar()->addMenu( "&File" );
 
     // create file menu options
+    QMenu*  fileMenu = menuBar()->addMenu( "&File" );
+
     QAction* newAction     = fileMenu->addAction( "&New", this, SLOT(fileNew()) );
+    newAction->setShortcut( QKeySequence::New );
 
     fileMenu->addSeparator();
-    fileMenu->addAction( "&Quit", this, SLOT(close()) );
-    newAction->setShortcut( QKeySequence::New );
+    QAction* OpenAction     = fileMenu->addAction( "&Open", this, SLOT(fileOpen()) );
+    OpenAction->setShortcut( QKeySequence::Open );
+
+    QAction* SaveAction     = fileMenu->addAction( "&Save", this, SLOT(fileSaveAs()) );
+    SaveAction->setShortcut( QKeySequence::SaveAs );
+
+    fileMenu->addSeparator();
+    QAction* QuitAction     = fileMenu->addAction( "&Quit", this, SLOT(close()) );
+    QuitAction->setShortcut( QKeySequence::Quit );
+
+
 
     // create undo stack and associated menu actions
     m_undoStack = new QUndoStack( this );
@@ -76,6 +88,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // add status bar message
     statusBar()->showMessage("QSimulate has started");
+
+    frame = new QFrame(view);
+    frame->setObjectName(QStringLiteral("frame"));
+    frame->setGeometry(QRect(0, 410, 781, 51));
+    frame->setFrameShape(QFrame::StyledPanel);
+    frame->setFrameShadow(QFrame::Raised);
+    progressBar = new QProgressBar(frame);
+    progressBar->setObjectName(QStringLiteral("progressBar"));
+    progressBar->setGeometry(QRect(350, 10, 118, 41));
+    progressBar->setValue(healthProg);
+
+
+    //connect(healthProg, SIGNAL(valuechanged(int))
+    //        , progressBar, SLOT(setValue(int)));
+
+
+
+    //void QProgressBar::valueChanged(int value)myRect::player_health
 
     modeType = 'B';
     enemy_x = 0.0;
@@ -147,6 +177,9 @@ bool MainWindow::gameState(int level)
 {
     timer = new QTimer();       //Creating a new timer.
     player = new myRect(timer); //Creating player, and passing a Timer.
+
+    int healthProg = player->giveHealth(); //set healthprog
+    qDebug() << "HealthProg: " << healthProg;
 
     //Add player to the scene.
     m_scene->addItem(player);
