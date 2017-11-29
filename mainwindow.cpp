@@ -528,54 +528,6 @@ void MainWindow::printWhenPressed()
     }
 }
 
-/********************************* filePrintPreview **********************************/
-
-/*void  MainWindow::filePrintPreview()
-{
-  // display print preview dialog
-  QPrinter             printer( QPrinter::ScreenResolution ); // QPrinter::HighResolution );
-  QPrintPreviewDialog  preview( &printer, this );
-  connect( &preview, SIGNAL(paintRequested(QPrinter*)), SLOT(print(QPrinter*)) );
-  preview.exec();
-}
-
-/************************************ filePrint **************************************/
-
-/*void  MainWindow::filePrint()
-{
-  // display print dialog and if accepted print
-  QPrinter       printer( QPrinter::ScreenResolution );
-  QPrintDialog   dialog( &printer, this );
-  if ( dialog.exec() == QDialog::Accepted ) print( &printer );
-}
-
-/*************************************** print ***************************************/
-
-/*void  MainWindow::print( QPrinter* printer )
-{
-  // create painter for drawing print page
-  QPainter painter( printer );
-  int      w = printer->pageRect().width();
-  int      h = printer->pageRect().height();
-  QRect    page( 0, 0, w, h );
-
-  // create a font appropriate to page size
-  QFont    font = painter.font();
-  font.setPixelSize( (w+h) / 100 );
-  painter.setFont( font );
-
-  // draw labels in corners of page
-  painter.drawText( page, Qt::AlignTop    | Qt::AlignLeft, "QSimulate" );
-  painter.drawText( page, Qt::AlignBottom | Qt::AlignLeft, QString(getenv("USERNAME")) );
-  painter.drawText( page, Qt::AlignBottom | Qt::AlignRight,
-                    QDateTime::currentDateTime().toString( Qt::DefaultLocaleShortDate ) );
-
-  // draw simulated landscape
-  page.adjust( w/20, h/20, -w/20, -h/20 );
-  m_scene->render( &painter, page );
-}*/
-
-
 /************************************ closeEvent *************************************/
 
 void  MainWindow::closeEvent( QCloseEvent* event )

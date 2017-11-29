@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>504</height>
+    <width>800</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>1</horstretch>
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>776</width>
-    <height>504</height>
+    <width>800</width>
+    <height>600</height>
    </size>
   </property>
   <property name="sizeIncrement">
@@ -32,7 +32,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Ast-ROID RAGE</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/new/files/Standard_Ship_01.png</normaloff>:/new/files/Standard_Ship_01.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-image: url(:/new/files/Galaxy-illustration.jpg);</string>
@@ -43,6 +47,12 @@
      <horstretch>1</horstretch>
      <verstretch>1</verstretch>
     </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>800</width>
+     <height>600</height>
+    </size>
    </property>
    <property name="sizeIncrement">
     <size>
@@ -91,7 +101,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>776</width>
+     <width>800</width>
      <height>25</height>
     </rect>
    </property>
