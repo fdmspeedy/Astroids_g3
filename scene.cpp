@@ -35,9 +35,9 @@ Scene::Scene( QUndoStack* undoStack ) : QGraphicsScene()
 
 
 //Define creation of player when new is hit.
-void Scene::new_game()
+/*void Scene::new_game()
 {
-    /*myRect *player = new myRect(); //Creating player
+    myRect *player = new myRect(); //Creating player
     addItem(player);
     //Set player in the middle.
     player->setPos(800 / 2, 600/ 2); //Set player in the middle.
@@ -46,9 +46,9 @@ void Scene::new_game()
     QTimer * timer = new QTimer();
     QObject::connect(timer, SIGNAL(timeout()), player, SLOT(spawn()));
     timer->start(1000/33); //Make an enemy every 2000 milli-seconds
-    //new_game = false;*/
+    //new_game = false;
 }
-
+*/
 /************************************ writeStream ************************************/
 
 /*void  Scene::writeStream( QXmlStreamWriter* stream )
