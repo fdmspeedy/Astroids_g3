@@ -1,9 +1,11 @@
+
+
 /*Team Memebers:
+-Hector Rios
+-Eric J. Smrkovsky
 -Freddie Martinez
 -Joshua L. Douglas
 -Aaron O. Gomez
--Hector Rios
--Eric J. Smrkovsky
 -Scott D. Farrow*/
 
 #include <QApplication>
@@ -23,3 +25,74 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+
+/*| = - = - = D O C U M E N T A T I O N = - = - = |
+
+========= |GAME FLOW|
+
+
+
+
+
+
+     *******************************************************************
+     *                      MainWindow                                 *
+     *                                                                 *
+     *                                                                 *
+     *******************************************************************
+                             ^
+                             *calls
+     *******************************************************************
+     *                      Main                                       *
+     *                                                                 *
+     * create main event loop handler and parse command line arguments *
+     *******************************************************************
+
+
+
+
+
+
+
+========= |HEADERS|
+
+= mainwindow.h = -
+
+= scene.h = -
+
+= station.h = -
+
+= commandstationadd.h = -
+
+= commandstationmove.h = -
+
+= commandstationdelete.h = -
+
+= playership.h = -
+
+========= |SOURCES|
+
+= main.cpp = -
+
+= mainwindow.cpp = -
+
+= scene.cpp = -
+
+= station.cpp = -
+
+= playership.cpp = -
+
+========= |Variable|
+
+= main.cpp = -
+
+= mainwindow.cpp = -
+
+= scene.cpp = -
+
+= station.cpp = -
+
+= playership.cpp = -
+
+
+*/
