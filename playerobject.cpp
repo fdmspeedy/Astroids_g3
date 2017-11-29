@@ -20,6 +20,7 @@ myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
     player_health = 100.0; //Total starting health.
 
     spacePressed = false;
+    bulletCooldown = 0;   //COntrol of bullet pressing.
 
     player_timer = timer;
 
@@ -120,20 +121,10 @@ void myRect::keyPressEvent(QKeyEvent *event)
     {
 
     }
-    else if (event->key() == Qt::Key_Space)
+    else if ((event->key() == Qt::Key_Space) && (!bulletCooldown))
     {
         spacePressed = true;
-        //Create Bullet.
-        /*Bullet * bullet = new Bullet();
-
-        //Set position of the bullet.
-        bullet->setPos(x() + (50/2), y()-(66/2));
-        bullet->updateBullet(angle, speed_x, speed_y);
-
-        //qDebug() << "Bullet created";
-        scene()->addItem(bullet);
-
-        QObject::connect(player_timer, SIGNAL(timeout()), bullet, SLOT(move()));*/
+        bulletCooldown = 10;
     }
 }
 
@@ -211,6 +202,10 @@ void myRect::movement()
             return;
         }
     }
+
+    //Counts down till player can shoot again.
+    if (bulletCooldown != 0)
+        bulletCooldown--;
 
     //Player velocity is being moved.setPos()
     //from: Top. To: Bottom.

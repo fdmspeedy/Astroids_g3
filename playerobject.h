@@ -31,6 +31,8 @@ private:
     bool spacePressed;
 
     int player_health;
+    int bulletCooldown;
+
 
     float angle;
 
