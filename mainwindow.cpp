@@ -41,7 +41,6 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QMenu*  fileMenu = menuBar()->addMenu( "&File" );
 
     // create file menu options
     QMenu*  fileMenu = menuBar()->addMenu( "&File" );
