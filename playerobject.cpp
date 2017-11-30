@@ -117,16 +117,7 @@ void myRect::keyPressEvent(QKeyEvent *event)
     }
 
     //Possible brake button.
-    else if (event->key() == Qt::Key_Down)
-    {
-        if (pos().y() > 0)
-        {
 
-            //This stacks the speed of the ship when going in one direction too much.
-            speed_x = speed_x/2;
-            speed_y = speed_y/2;
-        }
-    }
     else if ((event->key() == Qt::Key_Space) && (!bulletCooldown))
     {
         spacePressed = true;
@@ -204,7 +195,7 @@ void myRect::movement()
     {
         if (typeid(*(colliding_items[count])) == typeid(Enemy))
         {
-            player_health -= 10;
+            player_health -= 25;
             qDebug() << "PLAYER HEALTH: " << player_health;
 
             return;

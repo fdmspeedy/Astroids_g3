@@ -42,7 +42,6 @@ public:
     //This controls the game flow. Recontruction Begins here.
     bool gameState(int);
     void spawnEnemy(int, char, float, float);
-    void checkListItem();
     ~MainWindow();
 
 public slots:
@@ -51,9 +50,7 @@ public slots:
   void fileNew();                     // start new simulation
   bool fileSaveAs();                  // save simulation to file returning true if successful
   bool fileOpen();                    // load simulation file returning true if successful
-  void printWhenPressed();
   void spawnBullet();
-  void collisionItems();
   void determineBreakUp();
   void isLevelDone();
 

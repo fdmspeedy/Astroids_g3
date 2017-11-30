@@ -58,22 +58,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     fileMenu->addSeparator();
     QAction* QuitAction     = fileMenu->addAction( "&Quit", this, SLOT(close()) );
     QuitAction->setShortcut( QKeySequence::Quit );
-/*
-        // create file menu options
-    QMenu*  setMenu = menuBar()->addMenu( "&Settings" );
-
-    QAction* PrefAction     = setMenu->addAction( "&Preferences", this, SLOT() );
-
-        // create file menu options
-    QMenu*  helpMenu = menuBar()->addMenu( "&Help" );
-
-    QAction* helpAction     = helpMenu->addAction( "&Help", this, SLOT() );
-    helpAction->setShortcut( QKeySequence::HelpContents );
-
-    helpMenu->addSeparator();
-    QAction* aboutAction     = helpMenu->addAction( "&About", this, SLOT() );
-
-*/
 
     // create undo stack and associated menu actions
     m_undoStack = new QUndoStack( this );
@@ -85,9 +69,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     view->setAlignment( Qt::AlignLeft | Qt::AlignTop );
     view->setFrameStyle( 0 );
     setCentralWidget( view );
-
-    //Add player to scene
-    //m_scene->addItem(player);
 
     //Regulate view-ing of the scene.
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -101,24 +82,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // add status bar message
     statusBar()->showMessage("QSimulate has started");
-
-    //
-    frame = new QFrame(view);
-    frame->setObjectName(QStringLiteral("frame"));
-    frame->setGeometry(QRect(0, 550, 800, 50));
-    frame->setFrameShape(QFrame::StyledPanel);
-    frame->setFrameShadow(QFrame::Raised);
-    progressBar = new QProgressBar(frame);
-    progressBar->setObjectName(QStringLiteral("progressBar"));
-    progressBar->setGeometry(QRect(350, 5, 118, 20));
-    progressBar->setValue(100);
-
-    //connect(healthProg, SIGNAL(valuechanged(int))
-    //        , progressBar, SLOT(setValue(int)));
-
-
-
-    //void QProgressBar::valueChanged(int value)myRect::player_health
 
     modeType = 'B';
     enemy_x = 0.0;
@@ -156,7 +119,6 @@ void  MainWindow::fileNew()
   Scene*          newScene = new Scene( m_undoStack );
   QGraphicsView*  view     = dynamic_cast<QGraphicsView*>( centralWidget() );
   view->setScene( newScene );
-  qDebug() << "Before deletion of old scene.";
 
   delete m_scene;             //Delete old scene.
   m_scene = newScene;         //Create a new scene.
@@ -238,28 +200,9 @@ void MainWindow::spawnEnemy(int limit, char size, float before_x, float before_y
 
         m_scene->addItem(enemy);     //Adds enemy to the scene.
 
-        //qDebug() << "adress?: " << enemy;
-        cout << "adress?: " << enemy << endl;
-
         //Connects astroid movement to the Timer.
         QObject::connect(timer, SIGNAL(timeout()), enemy, SLOT(move()));
     }
-    qDebug() << "Within Creating Enemy func.";
-}
-
-void MainWindow::checkListItem()
-{
-    int countA, countB,
-        current_list_len = BullList.size(),
-        sceneCount, sceneItems = m_scene->items().size();
-
-    //QList<QGraphicsPixmapItem *> OnScene = m_scene->items();
-
-    /*for (sceneCount = 0; sceneCount < sceneItems; sceneCount++)
-    {
-        //qDebug() << "reference: " << *OnScene[sceneCount];
-    }*/
-    //for (countA = 0; countA < current_list_len; countA++)
 }
 
 //This creates a bullet.
@@ -317,11 +260,6 @@ void MainWindow::spawnBullet()
 
 }
 
-void MainWindow::collisionItems()
-{
-
-}
-
 //This determines where the astroid that collided is
 //and then sets it to false and removes it from scene.
 void MainWindow::determineBreakUp()
@@ -349,38 +287,30 @@ void MainWindow::determineBreakUp()
     //Determine what they are and destroy/create new ones.
     if (enemyHit.size() != 0)
     {
+        //Play sound
+        if(crashSound->state() == QMediaPlayer::PlayingState)
+        {
+            crashSound->setPosition(0);
+        }
+        else if(crashSound->state() == QMediaPlayer::StoppedState)
+        {
+            crashSound->play();
+        }
+
         for (countA = 0; countA < enemyHit.size(); countA++)
         {
-
-            qDebug() << "Break 5";
 
             type = enemyHit.value(countA)->giveType();
             X = enemyHit.value(countA)->givePosX();
             Y = enemyHit.value(countA)->givePosY();
-
-            qDebug() << "Break 6";
-
-            //Play sound
-            if(crashSound->state() == QMediaPlayer::PlayingState)
-            {
-                crashSound->setPosition(0);
-            }
-            else if(crashSound->state() == QMediaPlayer::StoppedState)
-            {
-                crashSound->play();
-            }
 
             if (type == 'B')
                 spawnEnemy(2, 'M', X, Y);
             else if (type == 'M')
                 spawnEnemy(2, 'S', X, Y);
 
-            qDebug() << "Break 7";
-
             delete enemyHit.value(countA);
-
         }
-        qDebug() << "Break 8";
     }
 }
 
@@ -388,11 +318,17 @@ void MainWindow::determineBreakUp()
 //When 'limit' reached; it stops the increase in hardness.
 void MainWindow::isLevelDone()
 {
+    if (player->giveHealth() <= 0)
+    {
+        fileNew();
+        qDebug() << "NEW GAME MOVING";
+    }
     //if all asteroids gone, start a new level.
     if (AstList.size() == 0)
     {
         level_count++;      //Increment the amount of enemies in next level.
         gamechange = true;  //New gamestate needed.
+
 
         if(level_count < 6)
         {
@@ -408,13 +344,12 @@ void MainWindow::isLevelDone()
         }
         if (level_count == 6)
         {
-            //Levels done = end game.
-            qDebug() << "Limit reached - End Game.";
+            level_count = 2;
+            fileNew();
         }
         else
         {
             fileNew();      //Start another game state
-
         }
     }
 }
@@ -524,13 +459,6 @@ bool  MainWindow::fileOpen()
   return true;
 }
 
-void MainWindow::printWhenPressed()
-{
-    if(player->returnSpacePressed())
-    {
-        qDebug() << "Hello.";
-    }
-}
 
 /************************************ closeEvent *************************************/
 

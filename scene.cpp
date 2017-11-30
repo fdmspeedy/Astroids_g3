@@ -30,7 +30,7 @@ Scene::Scene( QUndoStack* undoStack ) : QGraphicsScene()
   addLine( 0, 0, 0, 1, QPen(Qt::transparent, 1) );
 
   // connect selection Changed signal to selectStations slot
-  connect( this, SIGNAL(selectionChanged()), this, SLOT(new_game()) );
+  //connect( this, SIGNAL(selectionChanged()), this, SLOT(new_game()) );
 }
 
 

@@ -24,7 +24,7 @@ public:
   //void  readStream( QXmlStreamReader* );      // read scene data from xml stream
 
 public slots:
-  void new_game();
+ // void new_game();
 signals:
   void  message( QString );                                  // info text message signal
 
