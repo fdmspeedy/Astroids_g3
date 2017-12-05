@@ -13,23 +13,24 @@
 
 using namespace std;
 
-//Constructor.
-//The Timer is passed in order to create bullet and astroid movement.
+//The Timer is passed for player movement.
 myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
 {
     player_health = 100.0; //Total starting health.
 
-    spacePressed = false;
-    bulletCooldown = 0;   //Control of bullet pressing.
+    spacePressed = false;  //Space has not been pressed yet.
+    bulletCooldown = 0;    //Control of bullet pressing.
 
-    player_timer = timer;
+    player_timer = timer;  //Timer stored within Player.
 
     //Ship Width and Height.
     width = 50/2;
     height = 66/2;
 
+    //Player Ship image.
     setPixmap(QPixmap(":/new/files/Standard_Ship_01.png")); //Ship image.
 
+    //Sets the ship focusable so that commands go to the Player.
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 
@@ -42,6 +43,7 @@ myRect::myRect(QTimer * timer) : QGraphicsPixmapItem()
     speed_x = 0.0;
     speed_y = 0.0;
 
+    //Set Angle.
     angle = 0.0;
 }
 
@@ -116,15 +118,17 @@ void myRect::keyPressEvent(QKeyEvent *event)
         }
     }
 
-    //Possible brake button.
-
+    //If space is pressed, and bullet cool down vairable are zero then continue.
     else if ((event->key() == Qt::Key_Space) && (!bulletCooldown))
     {
         spacePressed = true;
+
+        //Sets bullet cool down to higher number as to be controlled by the Timer.
         bulletCooldown = 10;
     }
 }
 
+//Returns true if space was pressed.
 bool myRect::returnSpacePressed()
 {
     bool relay;
@@ -136,60 +140,68 @@ bool myRect::returnSpacePressed()
     return relay;
 }
 
+//Give player Angle.
 float myRect::giveAngle()
 {
     return angle;
 }
 
+//Give player speed x.
 float myRect::giveSpeedX()
 {
     return speed_x;
 }
 
+//Give player speed y.
 float myRect::giveSpeedY()
 {
     return speed_y;
 }
 
+//Give player Width.
 int myRect::giveWidth()
 {
     return width;
 }
 
+//Give player Height.
 int myRect::giveHeight()
 {
     return height;
 }
 
+//Give PLayer Health.
 int myRect::giveHealth()
 {
     return player_health;
 }
 
-//new
-//Note: changed width and height to be floats, and added three functions,
-//and private varible.
+//Updates the Player varibles that Bullet position is based off of.
 void myRect::setTipShip()
 {
     shipFrontY = -(height)*cos(qDegreesToRadians(angle));
     shipFrontX = (width)*sin(qDegreesToRadians(angle));
 }
+
+//Give player Tip Y.
 float myRect::giveTipY()
 {
     return (y() + shipFrontY);
 }
 
+//Give player Tip X.
 float myRect::giveTipX()
 {
     return (x()+(width)+shipFrontX);
 }
 
+//Movement() helps the player move and is connected to the Timer.
 void myRect::movement()
 {
     int count, n;
     QList<QGraphicsItem *> colliding_items = collidingItems();
 
-    //If bullet collides with enemy destroy both.
+    //If player collides with enemy, lower player health..
     colliding_items = collidingItems();
     for (count = 0, n = colliding_items.size(); count < n ;++count)
     {

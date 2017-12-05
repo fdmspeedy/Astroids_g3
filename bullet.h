@@ -28,9 +28,6 @@ public:
     float giveEnemyX();
     float giveEnemyY();
 
-    //Introduce list and return with changed version.
-    //void enemy_list(QList<Enemy*> &);//List, X, Y
-
     //Was an Enemy destroyed
     bool enemyDown();
 
@@ -40,24 +37,29 @@ private:
 
     QList<QGraphicsItem *> colliding_items;
 
-    int b_width;
-    int b_height;
-    float standard_speed;
-    float speed_x;
+    int b_width;  //Width of Bullet.
+    int b_height; //Height of Bullet.
+
+    float standard_speed; //Holds basic speed of a Bullet.
+    
+    //Holds Stacked speed of bullet			
+    float speed_x;	  
     float speed_y;
 
+    //Records enemy information.
     float enemy_X;
     float enemy_Y;
 
-    bool ifExist;
-    bool boogieDown;
+    bool ifExist;    //Records if it has been crashed.
+    bool boogieDown; //Records if it has hit an Asteroid.
 
-    QList<Enemy*> AstList;
+    QList<Enemy*> AstList; //Records encounters with Asteroids.
 
 
 
 public slots:
-    void move();
+    //Important function called by timer for bullet movement.
+    void move();      
     void enemy_list(QList<Enemy*> &);
 };
 

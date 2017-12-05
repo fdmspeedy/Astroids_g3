@@ -13,38 +13,28 @@
 //SLots and Signals
 Enemy::Enemy(char size, float before_x, float before_y)
 {
-    type = size;
-    //Set truth bool to true.
-    ifExist = true;
+    type = size;        //Saves what Type it is.
+    ifExist = true;     //Sets truth bool to true.
 
-    //Define dimensions
-    //width = 144;
-    //height = 146;
-
+    //Based on what type it is, it adjusts its characterisitics.
     if (type == 'B')
     {
         width = 144;
         height = 146;
-        qDebug() << "B made.";
 
         setPixmap(QPixmap(":/new/files/black_ball.png"));
     }
     else if (type == 'M')
     {
         width = 100;
-        height = 72;//etc.
-
-        qDebug() << "M made.";
+        height = 72;
 
         setPixmap(QPixmap(":/new/files/black_ball_M.png"));
     }
     else if (type == 'S')
     {
-        qDebug() << "S made.";
-
         width = 60;
-        height = 40;//etc.
-
+        height = 40;
         setPixmap(QPixmap(":/new/files/black_ball_S.png"));
     }
 
@@ -55,7 +45,7 @@ Enemy::Enemy(char size, float before_x, float before_y)
     //Random Angle. Maybe not needed.
     angle = qrand() % 360;
 
-    //Standard speed
+    //Standard speed, and speed is also changed based on Size.
     speed = 1.5;
     if (size == 'B')
         speed = 1.5;
@@ -66,7 +56,7 @@ Enemy::Enemy(char size, float before_x, float before_y)
     else
         speed = 1.5;
 
-    //At a given angle.
+    //At a given angle, change its angle.
     setTransformOriginPoint(width/2, height/2);
     setRotation(angle);
 
@@ -78,65 +68,72 @@ Enemy::Enemy(char size, float before_x, float before_y)
     before_X = before_x;
     before_Y = before_y;
 
-    //Repositions lower sized enemies.
+    //Repositions lower sized enemies based on "before" Asteroids Position.
     if ((type == 'M') || (type == 'S'))
     {
-        qDebug() << "before_x: " << before_x;
-        qDebug() << "before_y: " << before_y;
-
         setPos(before_X , before_Y);
     }
     else
-        setPos(random_x, random_y);
+        setPos(random_x, random_y);         //Random poitison if a 'B' type.
     //Play sound when bullet is created
     //damageSound = new QMediaPlayer();
     //damageSound->setMedia(QUrl("qrc:/new/files/OUCH.wav"));
 
 }
 
+//Gives Size.
 char Enemy::giveType()
 {
     return type;
 }
 
+//Gives State..
 bool Enemy::giveState()
 {
     return ifExist;
 }
 
+//Updates State..
 bool Enemy::falseState()
 {
     ifExist = false;
 }
 
+//Gives Position X.
 float Enemy::givePosX()
 {
     return x();
 }
 
+//Gives Position Y.
 float Enemy::givePosY()
 {
     return y();
 }
 
+//Sets Size.
 void Enemy::setType(char input)
 {
     type = input;
 }
 
+//Updates State Speeds.
 void Enemy::updateState()
 {
     speed_y = -speed*cos(qDegreesToRadians(angle));
     speed_x = speed*sin(qDegreesToRadians(angle));
 }
 
-//width: 800, height: 600.
-void Enemy::move()//Is being called periodcally.
+//Move() is called by the Timer and controls the movement of the Asteroids.
+//Is being called periodcally.
+void Enemy::move()
 {
+    //Hold random positions.
     int pos_x;
     int pos_y = qrand() % 600;
+    int count, n;   //Loop variables.
 
-    int count, n;
+    //List of Colliding Items.
     QList<QGraphicsItem *> colliding_items = collidingItems();
 
     //If bullet collides with enemy destroy both.
@@ -144,25 +141,24 @@ void Enemy::move()//Is being called periodcally.
     {
         if (typeid(*(colliding_items[count])) == typeid(myRect))
         {
-            ifExist = false;
+            ifExist = false;           //Set State to false.
 
-            scene()->removeItem(this);
+            scene()->removeItem(this); //Remove from the scene.
 
-            //delete this;
         }
         else if (typeid(*(colliding_items[count])) == typeid(Bullet))
         {
-            qDebug() << "Hit by Bullet";
-            ifExist = false;
+            ifExist = false;           //Set State to false.
 
+            //Removes Colliding Items from the scene.
             scene()->removeItem(colliding_items[count]);
             scene()->removeItem(this);
 
+            //Delete bullet from scene as its information is not important.
             delete colliding_items[count];
         }
     }
 
-    //Width scene: 800, height scene: 600
     //move the enemy " Random ".
     setPos(x()+speed_x, y()+speed_y);
 
@@ -172,15 +168,17 @@ void Enemy::move()//Is being called periodcally.
         pos_x = qrand() % 800; //Move to the x_axis position from touched y-axis.
         setPos(pos_x, 0); //(x, y)
 
+        //Control Angle.
         angle += qrand() % 45;
         if (angle > 360)
             angle -= 360;
         else if (angle < 0)
             angle += 360;
 
-
+        //Rotate by given Angle.
         setRotation(angle);
 
+        //Speed and direction.
         speed_y = -speed*cos(qDegreesToRadians(angle));
         speed_x = speed*sin(qDegreesToRadians(angle));
     }
